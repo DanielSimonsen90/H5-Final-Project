@@ -4,11 +4,19 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:SmartWeightApp"
+    xmlns:pages_conn="clr-namespace:SmartWeightApp.Pages.Connections"
+    xmlns:pages_login="clr-namespace:SmartWeightApp.Pages.Login"
+    xmlns:pages_overview="clr-namespace:SmartWeightApp.Pages.Overview"
     Shell.FlyoutBehavior="Disabled">
 
-    <ShellContent
+    <!--<ShellContent
         Title="Home"
         ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+        Route="MainPage" />-->
+
+    <TabBar>
+        <ShellContent Route="LoginIndex" ContentTemplate="{DataTemplate pages_login:LoginIndex}" Title="Login - SmartWeight" />
+        <ShellContent Route="MainPage" ContentTemplate="{DataTemplate local:MainPage}" Title="SmartWeight" />
+    </TabBar>
 
 </Shell>

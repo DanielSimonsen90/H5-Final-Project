@@ -1,10 +1,17 @@
 ﻿
+using CommunityToolkit.Mvvm.ComponentModel;
+
 namespace SmartWeightApp.ViewModels
 {
-    public class LoginViewModel : BaseViewModel
+    public partial class LoginViewModel : BaseViewModel
     {
-        public string Username { get; set; }
-        public string Password { get; set; }
+        //public string Username { get; set; }
+        //public string Password { get; set; }
+        [ObservableProperty]
+        private string _username = "";
+        [ObservableProperty]
+        private string _password = "";
+
         public Command LoginCommand { get; set; }
 
         public LoginViewModel()
@@ -16,8 +23,20 @@ namespace SmartWeightApp.ViewModels
         {
             SimpleResponse response = await Client.Post(Endpoints.LOGIN, new Login(Username, Password));
             
-            if (response.IsSuccess) await Shell.Current.GoToAsync($"//{nameof(MainPage)}");
-            else await Shell.Current.DisplayAlert("Fejl", response.Message, "OK");
+            try
+            {
+                User = response.GetContent<User>();
+                await Shell.Current.GoToAsync($"//{nameof(MainPage)}");
+            }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlert(
+                    "Fejl", 
+                    response.IsSuccess ? 
+                        ex.Message : 
+                        response.Message, 
+                    "OK");
+            }
         }
     }
 }

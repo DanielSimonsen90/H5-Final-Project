@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using SmartWeightApp.Services;
 
 namespace SmartWeightApp.ViewModels
 {
@@ -15,7 +16,13 @@ namespace SmartWeightApp.ViewModels
             });
         }
 
-        protected User User { get; set; }
+        private readonly DataStore<User> UserStore = DependencyService.Get<DataStore<User>>();
+        protected User User
+        {
+            get => UserStore.Value;
+            set => UserStore.Value = value;
+        }
+
         protected ApiClient Client { get; set; }
 
         #region RefreshCommand

@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:SmartWeightApp.ViewModels"
              x:Class="SmartWeightApp.Pages.Login.LoginIndex"
+             x:DataType="vm:LoginViewModel"
              Title="LoginIndex">
     <VerticalStackLayout>
         <Label 
-            Text="Welcome to .NET MAUI!"
+            Text="{StaticResource AppName}"
             VerticalOptions="Center" 
             HorizontalOptions="Center" />
+        <Editor Text="{Binding Username}" Placeholder="Username" />
+        <Editor Text="{Binding Password}" Placeholder="Password" />
+        <Button Text="Login" Command="{Binding LoginCommand}" />
     </VerticalStackLayout>
 </ContentPage>
