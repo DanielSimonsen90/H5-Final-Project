@@ -66,7 +66,7 @@ namespace SmartWeightAPI.Controllers.Base
                     partialMeasurement.Date));
 
                 // Delete partial measurement
-                await DeleteAsync(Endpoints.PARTIAL_MEASUREMENTS, $"{partialMeasurement.Id}");
+                await DeleteAsync(Endpoints.MEASUREMENTS_PARTIALS, $"{partialMeasurement.Id}");
             }
             else
             {
@@ -82,7 +82,7 @@ namespace SmartWeightAPI.Controllers.Base
                     .Select(m => m.Id)
                     .Aggregate(new StringBuilder(), (acc, id) => acc.Append($"{id}-"))
                     .ToString();
-                await DeleteAsync(Endpoints.PARTIAL_MEASUREMENTS, $"collection/{partialMeasurementIdStrings}");
+                await DeleteAsync(Endpoints.MEASUREMENTS_PARTIALS, $"collection/{partialMeasurementIdStrings}");
             }
 
 

@@ -4,8 +4,10 @@
     {
         CONNECTIONS,
         MEASUREMENTS,
-        PARTIAL_MEASUREMENTS,
+        MEASUREMENTS_PARTIALS,
+        MEASUREMENTS_OVERVIEW,
         USERS,
-        LOGIN
+        USERS_LOGIN,
+        WEIGHTS
     }
 }

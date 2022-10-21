@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:SmartWeightApp.ViewModels"
              x:Class="SmartWeightApp.Pages.Connections.ConnectionsIndex"
+             x:DataType="vm:ConnectionViewModel"
              Title="ConnectionsIndex">
     <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+        <Button Text="{Binding ConnectionText}" Command="{Binding ConnectCommand}" />
+        <Button Text="Disconnect" Command="{Binding DisconnectCommand}" />
+        <!-- TODO: Create camera thingy here -->
     </VerticalStackLayout>
 </ContentPage>

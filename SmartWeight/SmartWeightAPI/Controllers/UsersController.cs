@@ -16,11 +16,17 @@ namespace SmartWeightAPI.Controllers
         protected override void DeleteEntity(User entity) => _context.Users.Remove(entity);
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] User user) => 
-            !ModelState.IsValid ? BadRequest($"User model is invalid") :
-            !_context.Users.Any(u => u.Username == user.Username && u.Password == user.Password) ? NotFound("Invalid username or password") :
-            Ok("Successful login.");
-
+        public IActionResult Login([FromBody] User login)
+        {
+            if (!ModelState.IsValid) return BadRequest($"User model is invalid");
+            
+            User? user = _context.Users.FirstOrDefault(u => 
+                u.Username == login.Username 
+                && u.Password == login.Password);
+            
+            return user is not null ? Ok(user) : NotFound("Invalid username or password");
+        }
+        
         [HttpDelete("login/{userId}")]
         public IActionResult Logout(int userId)
         {

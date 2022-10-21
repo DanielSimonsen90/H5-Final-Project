@@ -14,24 +14,23 @@ namespace SmartWeightApp.ViewModels
 
         public Command LoginCommand { get; set; }
 
-        public LoginViewModel()
+        public LoginViewModel(ContentPage page) : base(page)
         {
             LoginCommand = new(OnLogin); 
         }
         
         private async void OnLogin()
         {
-            SimpleResponse response = await Client.Post(Endpoints.LOGIN, new Login(Username, Password));
+            SimpleResponse response = await Client.Post(Endpoints.USERS_LOGIN, new Login(Username, Password));
             
             try
             {
                 User = response.GetContent<User>();
-                await Shell.Current.GoToAsync($"//{nameof(MainPage)}");
+                await GoToAsync($"//{nameof(MainPage)}");
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert(
-                    "Fejl", 
+                await Alert("Fejl", 
                     response.IsSuccess ? 
                         ex.Message : 
                         response.Message, 

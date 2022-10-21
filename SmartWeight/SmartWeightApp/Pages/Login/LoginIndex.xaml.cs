@@ -5,6 +5,6 @@ public partial class LoginIndex : ContentPage
 	public LoginIndex()
 	{
 		InitializeComponent();
-		BindingContext = new LoginViewModel();
+		BindingContext = new LoginViewModel(this);
 	}
 }

@@ -6,8 +6,10 @@ namespace SmartWeightApp.ViewModels
     [ObservableObject]
     public partial class BaseViewModel
     {
-        public BaseViewModel()
+        public BaseViewModel(ContentPage page)
         {
+            Page = page;
+            
             RefreshCommand = new(async () =>
             {
                 IsRefreshing = true;
@@ -15,6 +17,7 @@ namespace SmartWeightApp.ViewModels
                 IsRefreshing = false;
             });
         }
+        protected ContentPage Page { get; }
 
         private readonly DataStore<User> UserStore = DependencyService.Get<DataStore<User>>();
         protected User User
@@ -23,7 +26,7 @@ namespace SmartWeightApp.ViewModels
             set => UserStore.Value = value;
         }
 
-        protected ApiClient Client { get; set; }
+        protected ApiClient Client { get; set; } = new ApiClient();
 
         #region RefreshCommand
         public Command RefreshCommand { get; set; }
@@ -37,5 +40,6 @@ namespace SmartWeightApp.ViewModels
         #endregion
 
         protected static Task GoToAsync(ShellNavigationState state) => Shell.Current.GoToAsync(state);
+        protected static Task Alert(string title, string message, string accept = "Okay", string cancel = null) => Shell.Current.DisplayAlert(title, message, accept, cancel);
     }
 }
