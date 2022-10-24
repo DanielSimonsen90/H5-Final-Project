@@ -12,6 +12,9 @@
             HorizontalOptions="Center" />
         <Editor Text="{Binding Username}" Placeholder="Username" />
         <Editor Text="{Binding Password}" Placeholder="Password" />
-        <Button Text="Login" Command="{Binding LoginCommand}" />
+        <HorizontalStackLayout>
+            <Button Text="Login" Command="{Binding LoginCommand}" />
+            <Button Text="Sign Up" Command="{Binding SignUpCommand}" />
+        </HorizontalStackLayout>
     </VerticalStackLayout>
 </ContentPage>

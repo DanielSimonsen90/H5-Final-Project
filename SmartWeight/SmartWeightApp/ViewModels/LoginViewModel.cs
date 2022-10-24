@@ -13,10 +13,12 @@ namespace SmartWeightApp.ViewModels
         private string _password = "";
 
         public Command LoginCommand { get; set; }
+        public Command SignUpCommand { get; set; }
 
         public LoginViewModel(ContentPage page) : base(page)
         {
-            LoginCommand = new(OnLogin); 
+            LoginCommand = new(OnLogin);
+            SignUpCommand = new(OnSignUp);
         }
         
         private async void OnLogin()
@@ -26,6 +28,7 @@ namespace SmartWeightApp.ViewModels
             try
             {
                 User = response.GetContent<User>();
+                ResetEditors();
                 await GoToAsync($"//{nameof(MainPage)}");
             }
             catch (Exception ex)
@@ -33,9 +36,33 @@ namespace SmartWeightApp.ViewModels
                 await Alert("Fejl", 
                     response.IsSuccess ? 
                         ex.Message : 
-                        response.Message, 
-                    "OK");
+                        response.Message
+                    );
             }
+        }
+        private async void OnSignUp()
+        {
+            var login = new Login(Username, Password);
+            SimpleResponse loginAttempt = await Client.Post(Endpoints.USERS, login);
+
+            if (loginAttempt.IsSuccess)
+            {
+                bool shouldLogin = await Alert("Bruger findes allerde", "Vil du logge ind med denne bruger?", "Ja", "Nej");
+                if (shouldLogin) OnLogin();
+                return;
+            }
+
+            var user = new User(Username, Password);
+            SimpleResponse userRes = await Client.Post(Endpoints.USERS, user);
+
+            if (!userRes.IsSuccess) await Alert("Fejl", userRes.Message);
+            else OnLogin();
+        }
+
+        private void ResetEditors()
+        {
+            Username = string.Empty;
+            Password = string.Empty;
         }
     }
 }

@@ -6,6 +6,7 @@ namespace SmartWeightApp.ViewModels
     {
         [ObservableProperty]
         private string _connectionText = "Not Connected";
+        public bool IsConnected => ConnectionText == "Not Connected";
 
         public Command ConnectCommand { get; set; }
         public Command DisconnectCommand { get; set; }

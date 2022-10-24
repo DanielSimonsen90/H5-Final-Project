@@ -7,7 +7,7 @@
              Title="ConnectionsIndex">
     <VerticalStackLayout>
         <Button Text="{Binding ConnectionText}" Command="{Binding ConnectCommand}" />
-        <Button Text="Disconnect" Command="{Binding DisconnectCommand}" />
+        <Button IsEnabled="{Binding IsConnected}" Text="Disconnect" Command="{Binding DisconnectCommand}" />
         <!-- TODO: Create camera thingy here -->
     </VerticalStackLayout>
 </ContentPage>

@@ -40,6 +40,6 @@ namespace SmartWeightApp.ViewModels
         #endregion
 
         protected static Task GoToAsync(ShellNavigationState state) => Shell.Current.GoToAsync(state);
-        protected static Task Alert(string title, string message, string accept = "Okay", string cancel = null) => Shell.Current.DisplayAlert(title, message, accept, cancel);
+        protected static Task<bool> Alert(string title, string message, string accept = "Okay", string cancel = null) => Shell.Current.DisplayAlert(title, message, accept, cancel);
     }
 }

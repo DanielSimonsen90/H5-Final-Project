@@ -1,5 +1,7 @@
 ﻿#nullable enable
 
+using SmartWeightApp.Models;
+
 namespace SmartWeightApp.Services
 {
     public class DataStore<T>
@@ -10,17 +12,21 @@ namespace SmartWeightApp.Services
 			get => _value;
 			set 
 			{
-                if (!Validator(value)) throw new InvalidDataException("Received value does not pass validation.");
+                if (_validator is not null && !_validator(value)) throw new InvalidDataException("Received value does not pass validation.");
                 _value = value;
-			}
+
+                if (_key.HasValue) LocalStorage.Set(_key.Value, value);
+            }
 		}
 
-		private readonly Func<T?, bool> Validator;
+		private readonly Func<T?, bool>? _validator;
+		private readonly StorageKeys? _key = default;
 
-		public DataStore(T? initialValue, Func<T?, bool> validator)
+		public DataStore(T? initialValue, StorageKeys? key = default, Func<T?, bool>? validator = null)
 		{
-            _value = initialValue;
-            Validator = validator;
+            _value = LocalStorage.Get<T>(StorageKeys.USER).Result ?? initialValue;
+			_key = key;
+            _validator = validator;
 		}
 	}
 }
