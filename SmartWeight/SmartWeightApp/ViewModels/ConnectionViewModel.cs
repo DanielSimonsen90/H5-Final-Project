@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿#nullable enable
+
+using System.Text;
 
 namespace SmartWeightApp.ViewModels
 {
@@ -22,24 +24,43 @@ namespace SmartWeightApp.ViewModels
         private async void IsUserConnected()
         {
             SimpleResponse res = await Client.Get(Endpoints.CONNECTIONS, User.Id.ToString());
-
             if (!res.IsSuccess) return;
             
-            Connection conn = res.GetContent<Connection>();
+            Connection? conn = res.GetContent<Connection>();
             if (conn is null) return;
 
             res = await Client.Get(Endpoints.WEIGHTS, conn.WeightId.ToString());
             if (!res.IsSuccess) return;
 
-            Weight weight = res.GetContent<Weight>();
+            Weight? weight = res.GetContent<Weight>();
+            if (weight is null) return;
 
             _connectionText = $"Connected to {weight.Name}.";
         }
 
 
-        private void OnConnect()
+        private async void OnConnect()
         {
-            throw new NotImplementedException("Camera function not implemented yet.");
+            if (!MediaPicker.Default.IsCaptureSupported)
+            {
+                await Alert("Capturing not supported.", "The app is unable to connect to your camera.");
+                return;
+            }
+
+            FileResult? result = await MediaPicker.Default.CapturePhotoAsync()
+                // Temporarily default to QR code to weights/1
+                ?? new FileResult("https://media.discordapp.net/attachments/777577204775125102/1034446105649365052/unknown.png");
+            if (result is null)
+            {
+                await Alert("No camera permission", "The camera could not be opened.");
+                return;
+            }
+
+            
+
+            using var stream = await result.OpenReadAsync();
+            var image = ImageSource.FromStream(() => stream);
+            Console.WriteLine(image);
         }
         private async void OnDisconnect()
         {

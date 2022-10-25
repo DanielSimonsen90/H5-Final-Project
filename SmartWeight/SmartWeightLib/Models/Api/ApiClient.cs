@@ -49,18 +49,5 @@ namespace SmartWeightLib.Models.Api
                 )
             );
         #endregion
-
-        //#region Request => string
-        //public async Task<string> PostString<Content>(Endpoints endpoint, string url, Content? content) => await RequestString(HttpMethod.Post, endpoint, url, content);
-        //public async Task<string> GetString(Endpoints endpoint, string url) => await RequestString<object>(HttpMethod.Get, endpoint, url);
-        //public async Task<string> PutString<Content>(Endpoints endpoint, string url, Content? content) => await RequestString<Content>(HttpMethod.Put, endpoint, url, content);
-        //public async Task<string> DeleteString(Endpoints endpoint, string url) => await RequestString<object>(HttpMethod.Delete, endpoint, url);
-
-        //private async Task<string> RequestString<Content>(HttpMethod method, Endpoints endpoint, string url, Content? content = default)
-        //{
-        //    SimpleResponse response = await Request(method, endpoint, url, content);
-        //    return response.Message;
-        //}
-        //#endregion
     }
 }

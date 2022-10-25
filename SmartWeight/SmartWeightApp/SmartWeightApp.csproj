@@ -78,4 +78,16 @@
 	  </MauiXaml>
 	</ItemGroup>
 
+	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0-ios'">
+	  <PackageReference Include="ZXing.Net.Maui.Jgdev">
+	    <Version>1.0.5</Version>
+	  </PackageReference>
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0-maccatalyst'">
+	  <PackageReference Include="ZXing.Net.Maui.Jgdev">
+	    <Version>1.0.5</Version>
+	  </PackageReference>
+	</ItemGroup>
+
 </Project>
