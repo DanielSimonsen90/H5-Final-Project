@@ -22,22 +22,34 @@ namespace SmartWeightAPI.Controllers
             // Arguments provided are existing entities
             Weight? weight = _context.Weights.Find(weightId);
             User? user = _context.Users.Find(userId);
-            if (weight is null || user is null) return NotFound("One or more entities not found");
+            if (weight is null || user is null) return NotFound("One or more entities not found.");
 
             // Get previous connections
-            Connection? userConnection = _context.Connections.Find(userId);
-            Connection? weightConnection = _context.Connections.Find(weightId);
+            List<Connection> connections = _context.Connections.ToList();
+            Connection? conn = connections.Find(c => c.UserId == userId && c.WeightId == weightId);
 
             // Connections exist between entities
-            if (userConnection == weightConnection && userConnection is not null) return Ok("Connection was already established.");
+            if (conn is not null && conn.IsConnected) return Ok("Connection was already established.");
 
             // Remove any previous connections, if any
-            if (userConnection is not null) _context.Connections.Remove(userConnection);
-            if (weightConnection is not null) _context.Connections.Remove(weightConnection);
+            Connection? userConnection = connections
+                .Where(c => c.UserId == userId && c.IsConnected)
+                .FirstOrDefault();
+            Connection? weightConnection = connections
+                .Where(c => c.WeightId == weightId && c.IsConnected)
+                .FirstOrDefault();
+
+            if (userConnection is not null) userConnection.IsConnected = false;
+            if (weightConnection is not null) weightConnection.IsConnected = false;
 
             // Create connection and save
-            var conn = new Connection(user, weight);
-            _context.Connections.Add(conn);
+            if (conn is null)
+            {
+                conn = new Connection(user, weight, true);
+                _context.Connections.Add(conn);
+            }
+            else conn.IsConnected = true;
+            
             await _context.SaveChangesAsync();
 
             CreatedResult result = Created("connections/userId/weightId", conn);
@@ -45,10 +57,7 @@ namespace SmartWeightAPI.Controllers
         }
 
         [HttpGet("all")]
-        public IActionResult GetAllConnections(int userId = -1)
-        {
-            return Ok(_context.Connections.ToList());
-        }
+        public IActionResult GetAllConnections(int userId = -1) => Ok(_context.Connections.ToList());
 
         [HttpGet]
         public IActionResult GetConnection(int userId, bool fromApp)
@@ -56,22 +65,32 @@ namespace SmartWeightAPI.Controllers
             if (!fromApp) return Forbid("You are not allowed to view this information.");
 
             Connection? conn = _context.Connections.Find(userId);
-            if (conn is null) return NotFound("User is not connected to any weight.");
+            if (conn is null || !conn.IsConnected) return NotFound("User is not connected to any weight.");
 
             return Ok(conn);
         }
 
         [HttpDelete]
-        public IActionResult Disconnect(int userId, bool fromApp)
+        public IActionResult Disconnect(int userId, bool fromApp, bool delete)
         {
             if (!fromApp) return Forbid("You are not allowed to delete this connection.");
+            string response = "Connection already deleted";
 
             Connection? conn = _context.Connections.ToList().Find(c => c.UserId == userId);
-            if (conn is null) return Ok("Connection already deleted");
-
-            _context.Connections.Remove(conn);
+            if (conn is null) return Ok("Connection already deleted.");
+            else if (delete)
+            {
+                _context.Connections.Remove(conn);
+                response = "Connection deleted.";
+            }
+            else
+            {
+                conn.IsConnected = false;
+                response = $"Disconnected user {userId} from weight {conn.WeightId}.";
+            }
+            
             _context.SaveChangesAsync();
-            return Ok("Connection deleted");
+            return Ok(response);
         }
     }
 }

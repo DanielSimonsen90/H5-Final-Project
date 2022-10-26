@@ -15,14 +15,16 @@ namespace SmartWeightLib.Models.Data
         public int WeightId { get; set; }
         [ForeignKey("WeightId")]
         public Weight Weight { get; set; }
+        public bool IsConnected { get; set; }
 
         public Connection() { }
-        public Connection(User user, Weight weight)
+        public Connection(User user, Weight weight, bool isConnected = false)
         {
             User = user;
             UserId = user.Id;
             Weight = weight;
             WeightId = weight.Id;
+            IsConnected = isConnected;
         }
     }
 }

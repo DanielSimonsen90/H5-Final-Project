@@ -7,6 +7,6 @@ public partial class ConnectionsIndex : ContentPage
 	public ConnectionsIndex()
 	{
 		InitializeComponent();
-		BindingContext = new ConnectionViewModel(this);
+		BindingContext = new ConnectionsViewModel(this);
 	}
 }
