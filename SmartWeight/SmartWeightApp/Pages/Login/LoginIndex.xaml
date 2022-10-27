@@ -10,6 +10,10 @@
             Text="{StaticResource AppName}"
             VerticalOptions="Center" 
             HorizontalOptions="Center" />
+        <Label
+            Text="{Binding LoginState}"
+            VerticalOptions="Center"
+            HorizontalOptions="Center" />
         <Editor Text="{Binding Username}" Placeholder="Username" />
         <Editor Text="{Binding Password}" Placeholder="Password" />
         <HorizontalStackLayout>

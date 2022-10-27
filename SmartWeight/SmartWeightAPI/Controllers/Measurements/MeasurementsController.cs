@@ -14,6 +14,11 @@ namespace SmartWeightAPI.Controllers.Measurements
         }
 
         protected override void AddEntity(Measurement entity) => _context.Measurements.Add(entity);
+        protected override bool EntityExists(Measurement entity) => _context.Measurements.Any(m =>
+            m.WeightId == entity.WeightId
+            && m.Value == entity.Value
+            && m.Date == entity.Date
+            && m.UserId == entity.UserId);
         protected override List<Measurement> GetEntities() => _context.Measurements.ToList();
         protected override Measurement? GetEntity(int id) => _context.Measurements.Find(id);
         protected override void DeleteEntity(Measurement entity) => _context.Measurements.Remove(entity);

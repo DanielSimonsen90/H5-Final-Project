@@ -29,7 +29,7 @@ namespace SmartWeightApp.ViewModels
         public Command ConnectCommand { get; set; }
         public Command DisconnectCommand { get; set; }
         public Command DeleteCommand { get; set; }
-
+        
         private async void OnConnect()
         {
             throw new Exception("OnConnect doesn't work");

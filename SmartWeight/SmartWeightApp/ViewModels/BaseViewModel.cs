@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using SmartWeightApp.Services;
+﻿using SmartWeightApp.Services;
 #nullable enable
 
 namespace SmartWeightApp.ViewModels

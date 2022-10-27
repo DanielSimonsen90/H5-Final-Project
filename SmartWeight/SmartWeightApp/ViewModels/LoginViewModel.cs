@@ -1,16 +1,14 @@
 ﻿
-using CommunityToolkit.Mvvm.ComponentModel;
-
 namespace SmartWeightApp.ViewModels
 {
     public partial class LoginViewModel : BaseViewModel
     {
-        //public string Username { get; set; }
-        //public string Password { get; set; }
         [ObservableProperty]
         private string _username = "";
         [ObservableProperty]
         private string _password = "";
+        [ObservableProperty]
+        private string _loginState = "Please login to your accout.";
 
         public Command LoginCommand { get; set; }
         public Command SignUpCommand { get; set; }
@@ -23,12 +21,13 @@ namespace SmartWeightApp.ViewModels
         
         private async void OnLogin()
         {
+            await Task.Run(() => _loginState = "Logging you in...");
             SimpleResponse response = await Client.Post(Endpoints.USERS_LOGIN, new Login(Username, Password));
             
             try
             {
                 User = response.GetContent<User>();
-                ResetEditors();
+                ResetStates();
                 await GoToAsync($"//{nameof(MainPage)}");
             }
             catch (Exception ex)
@@ -43,11 +42,11 @@ namespace SmartWeightApp.ViewModels
         private async void OnSignUp()
         {
             var login = new Login(Username, Password);
-            SimpleResponse loginAttempt = await Client.Post(Endpoints.USERS, login);
+            SimpleResponse loginAttempt = await Client.Post(Endpoints.USERS_LOGIN, login);
 
             if (loginAttempt.IsSuccess)
             {
-                bool shouldLogin = await Alert("Bruger findes allerde", "Vil du logge ind med denne bruger?", "Ja", "Nej");
+                bool shouldLogin = await Alert("User already exists", "Would you like to login to this user?", "Yes", "No");
                 if (shouldLogin) OnLogin();
                 return;
             }
@@ -59,10 +58,11 @@ namespace SmartWeightApp.ViewModels
             else OnLogin();
         }
 
-        private void ResetEditors()
+        private void ResetStates()
         {
-            Username = string.Empty;
-            Password = string.Empty;
+            _username = string.Empty;
+            _password = string.Empty;
+            _loginState = User is not null ? $"Logged in as {User.Username}" : "Please login to your accout.";
         }
     }
 }

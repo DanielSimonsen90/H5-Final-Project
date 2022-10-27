@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MessagePack.Formatters;
+using Microsoft.AspNetCore.Mvc;
 using SmartWeightAPI.Controllers.Base;
 using SmartWeightLib.Database;
 using SmartWeightLib.Models.Data;
@@ -34,11 +35,14 @@ namespace SmartWeightAPI.Controllers.Measurements
         }
 
         protected override void AddEntity(PartialMeasurement entity) => _context.Measurements.Add(new Measurement(entity, null));
+        protected override bool EntityExists(PartialMeasurement entity) => _context.Measurements.Any(m => 
+            m.WeightId == entity.WeightId
+            && m.Value == entity.Value
+            && m.Date == entity.Date);
         protected override List<PartialMeasurement> GetEntities() => _context.Measurements
             .Where(m => m.UserId == null)
-        .ToList<PartialMeasurement>();
+            .ToList<PartialMeasurement>();
         protected override PartialMeasurement? GetEntity(int id) => _context.Measurements.Find(id);
-
         protected override void DeleteEntity(PartialMeasurement entity) => _context.Measurements.Remove(GetEntity(entity.Id) as Measurement);
 
         public override async Task<IActionResult> Create([FromBody] PartialMeasurement entity)

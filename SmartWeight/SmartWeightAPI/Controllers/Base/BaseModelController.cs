@@ -13,6 +13,7 @@ namespace SmartWeightAPI.Controllers.Base
         protected BaseModelController(SmartWeightDbContext context) : base(context) { }
 
         protected abstract void AddEntity(Entity entity);
+        protected abstract bool EntityExists(Entity entity);
         protected abstract Entity? GetEntity(int id);
         protected abstract List<Entity> GetEntities();
         protected abstract void DeleteEntity(Entity entity);
@@ -21,6 +22,7 @@ namespace SmartWeightAPI.Controllers.Base
         public async virtual Task<IActionResult> Create([FromBody] Entity entity)
         {
             if (!ModelState.IsValid) return BadRequest($"Provided {entityName} {nameof(entity)} is invalid.");
+            else if (EntityExists(entity)) return BadRequest($"Provided {entityName} {nameof(entity)} already exists.");
 
             AddEntity(entity);
             await _context.SaveChangesAsync();

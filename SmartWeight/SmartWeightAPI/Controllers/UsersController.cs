@@ -11,6 +11,9 @@ namespace SmartWeightAPI.Controllers
         public UsersController(SmartWeightDbContext context) : base(context) {}
 
         protected override void AddEntity(User entity) => _context.Users.Add(entity);
+        protected override bool EntityExists(User entity) => _context.Users.Any(u => 
+            u.Username == entity.Username
+            && u.Password == entity.Password);
         protected override List<User> GetEntities() => _context.Users.ToList();
         protected override User? GetEntity(int id) => _context.Users.Find(id);
         protected override void DeleteEntity(User entity) => _context.Users.Remove(entity);

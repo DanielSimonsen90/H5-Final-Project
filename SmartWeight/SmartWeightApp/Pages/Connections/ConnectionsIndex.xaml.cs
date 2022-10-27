@@ -4,9 +4,13 @@ namespace SmartWeightApp.Pages.Connections;
 
 public partial class ConnectionsIndex : ContentPage
 {
-	public ConnectionsIndex()
+    private ConnectionsViewModel _viewModel;
+    public ConnectionsIndex()
 	{
 		InitializeComponent();
-		BindingContext = new ConnectionsViewModel(this);
-	}
+		_viewModel = new ConnectionsViewModel(this);
+        BindingContext = _viewModel;
+    }
+
+	private void OnSwipe(object sender, SwipedEventArgs e) => _viewModel.OnSwipe(sender, e);
 }

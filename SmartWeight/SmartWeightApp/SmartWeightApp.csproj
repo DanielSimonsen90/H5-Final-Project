@@ -74,9 +74,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiXaml Update="Components\Connections\ConnectionView.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
 	  <MauiXaml Update="Resources\Settings\Text.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

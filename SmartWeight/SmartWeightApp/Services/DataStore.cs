@@ -1,7 +1,5 @@
 ﻿#nullable enable
 
-using SmartWeightApp.Models;
-
 namespace SmartWeightApp.Services
 {
     public class DataStore<T>
@@ -24,7 +22,9 @@ namespace SmartWeightApp.Services
 
 		public DataStore(T? initialValue, StorageKeys? key = default, Func<T?, bool>? validator = null)
 		{
-            _value = LocalStorage.Get<T>(StorageKeys.USER).Result ?? initialValue;
+            _value = (key is not null 
+				? LocalStorage.Get<T>(key.Value).Result 
+				: initialValue) ?? initialValue;
 			_key = key;
             _validator = validator;
 		}

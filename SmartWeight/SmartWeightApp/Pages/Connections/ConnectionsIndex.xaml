@@ -2,12 +2,21 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:SmartWeightApp.ViewModels"
+             xmlns:lib="clr-namespace:SmartWeightLib.Models.Data;assembly=SmartWeightLib"
              x:Class="SmartWeightApp.Pages.Connections.ConnectionsIndex"
-             x:DataType="vm:ConnectionViewModel"
+             x:DataType="vm:ConnectionsViewModel"
              Title="ConnectionsIndex">
     <VerticalStackLayout>
-        <Button Text="{Binding ConnectionText}" Command="{Binding ConnectCommand}" />
-        <Button IsEnabled="{Binding IsConnected}" Text="Disconnect" Command="{Binding DisconnectCommand}" />
-        <!-- TODO: Create camera thingy here -->
+        <ListView BindingContext="{Binding Connections}">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="vm:ConnectionViewViewModel">
+                    <SwipeGestureRecognizer Direction="Left,Right" Swiped="OnSwipe">
+                        <SwipeGestureRecognizer.CommandParameter>
+                            <x:Reference>BindingContext</x:Reference>
+                        </SwipeGestureRecognizer.CommandParameter>
+                    </SwipeGestureRecognizer>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </VerticalStackLayout>
 </ContentPage>

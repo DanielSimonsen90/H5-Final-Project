@@ -6,7 +6,7 @@ namespace SmartWeightApp
     {
         public static MauiApp CreateMauiApp()
         {
-            DependencyService.RegisterSingleton(new DataStore<User>(null, Models.StorageKeys.USER, value => 
+            DependencyService.RegisterSingleton(new DataStore<User>(null, StorageKeys.USER, value => 
                 value is not null // value exists
                 && value.Id > -1 // value has a vaild userId
                 && !string.IsNullOrEmpty(value.Username)) // value has a Username
