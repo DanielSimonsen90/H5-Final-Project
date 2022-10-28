@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace SmartWeightLib.Models.Data
+﻿namespace SmartWeightLib.Models.Data
 {
     /// <summary>
     /// Full measurement

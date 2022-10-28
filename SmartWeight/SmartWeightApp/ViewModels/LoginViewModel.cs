@@ -8,13 +8,17 @@ namespace SmartWeightApp.ViewModels
         [ObservableProperty]
         private string _password = "";
         [ObservableProperty]
-        private string _loginState = "Please login to your accout.";
+        private string _loginState;
 
         public Command LoginCommand { get; set; }
         public Command SignUpCommand { get; set; }
 
         public LoginViewModel(ContentPage page) : base(page)
         {
+            _loginState = User is not null 
+                ? $"Logged in as {User.Username}" 
+                : "Please login to your accout.";
+
             LoginCommand = new(OnLogin);
             SignUpCommand = new(OnSignUp);
         }

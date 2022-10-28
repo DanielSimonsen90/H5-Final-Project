@@ -7,16 +7,24 @@
              x:DataType="vm:ConnectionsViewModel"
              Title="ConnectionsIndex">
     <VerticalStackLayout>
-        <ListView BindingContext="{Binding Connections}">
-            <ListView.ItemTemplate>
+        <CollectionView BindingContext="{Binding Connections}" EmptyView="No connections yet.">
+            <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="vm:ConnectionViewViewModel">
-                    <SwipeGestureRecognizer Direction="Left,Right" Swiped="OnSwipe">
-                        <SwipeGestureRecognizer.CommandParameter>
-                            <x:Reference>BindingContext</x:Reference>
-                        </SwipeGestureRecognizer.CommandParameter>
-                    </SwipeGestureRecognizer>
+                    <BoxView>
+                        <BoxView.GestureRecognizers>
+                            <SwipeGestureRecognizer Direction="Left,Right" Swiped="OnSwipe">
+                                <SwipeGestureRecognizer.CommandParameter>
+                                    <x:Reference>BindingContext</x:Reference>
+                                </SwipeGestureRecognizer.CommandParameter>
+                            </SwipeGestureRecognizer>
+                        </BoxView.GestureRecognizers>
+                    </BoxView>
                 </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <VerticalStackLayout>
+            <Editor Text="{Binding WeightIdInput}" />
+            <Button Text="Add Connection" Command="{Binding NewConnectionCommand}" />
+        </VerticalStackLayout>
     </VerticalStackLayout>
 </ContentPage>
