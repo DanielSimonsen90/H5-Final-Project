@@ -9,12 +9,25 @@ namespace SmartWeightAPI.Controllers
     [ApiController]
     public class ConnectionsController : BaseController
     {
-        public ConnectionsController(SmartWeightDbContext context) : base(context) 
-        {
-            // Remove all connections on restart
-            _context.Connections.RemoveRange(_context.Connections.ToList());
-            _context.SaveChanges();
-        }
+        public ConnectionsController(SmartWeightDbContext context) : base(context) {}
+        //~ConnectionsController()
+        //{
+        //    // Disconnect all connections on shutdown
+        //    try
+        //    {
+        //        if (_context.Connections.Any())
+        //        {
+        //            foreach (Connection conn in _context.Connections)
+        //            {
+        //                conn.IsConnected = false;
+        //                Connection old = _context.Connections.Find(conn.Id);
+        //                _context.Entry(old).CurrentValues.SetValues(conn);
+        //            }
+        //            _context.SaveChanges();
+        //        }
+        //    }
+        //    catch { }
+        //}
 
         [HttpPost("{weightId}")]
         public async Task<IActionResult> Connect(int weightId, int userId)
@@ -64,7 +77,7 @@ namespace SmartWeightAPI.Controllers
         {
             if (!fromApp) return Forbid("You are not allowed to view this information.");
 
-            Connection? conn = _context.Connections.Find(userId);
+            Connection? conn = _context.Connections.FirstOrDefault(conn => conn.UserId == userId);
             if (conn is null || !conn.IsConnected) return NotFound("User is not connected to any weight.");
 
             return Ok(conn);

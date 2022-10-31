@@ -7,7 +7,7 @@
              x:DataType="vm:OverviewViewModel"
              Title="OverviewIndex">
     <RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}">
-        <CollectionView EmptyView="{Binding NoMeasurements}">
+        <CollectionView ItemsSource="{Binding Measurements}" EmptyView="{Binding NoMeasurements}">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="lib:Measurement">
                     <ViewCell>

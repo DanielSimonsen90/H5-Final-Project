@@ -11,6 +11,4 @@ public partial class ConnectionsIndex : ContentPage
 		_viewModel = new ConnectionsViewModel(this);
         BindingContext = _viewModel;
     }
-
-	private void OnSwipe(object sender, SwipedEventArgs e) => _viewModel.OnSwipe(sender, e);
 }

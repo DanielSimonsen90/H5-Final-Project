@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-#nullable enable
+﻿#nullable enable
 
 namespace SmartWeightApp.ViewModels
 {
-    public class ConnectionViewViewModel : BaseViewModel
+    public class ConnectionViewModel : BaseViewModel
     {
-        public ConnectionViewViewModel(ContentView view, Connection connection, bool canBeDeleted) : base(view)
+        public ConnectionViewModel(Connection connection, bool canBeDeleted) : base()
         {
+            Name = connection.Weight.Name ?? $"Weight{connection.Weight.Id}";
             CanBeDeleted = canBeDeleted;
             Connection = connection;
 
@@ -20,14 +16,15 @@ namespace SmartWeightApp.ViewModels
         }
 
         private bool IsConnected => Connection.IsConnected;
-        public string State => IsConnected ? "Connected" : "Not Connected";
-        public string Name => Connection.Weight.Name ?? $"Weight{Connection.Weight.Id}";
+        public string State => (IsConnected ? "Connected" : "Not Connected") + $" to {Name}";
+        public Command PublicCommand => IsConnected ? DisconnectCommand : ConnectCommand;
 
+        public string Name { get; }
         public bool CanBeDeleted { get; }
-        private Connection Connection { get; set; }
+        public Connection Connection { get; }
 
-        public Command ConnectCommand { get; set; }
-        public Command DisconnectCommand { get; set; }
+        private Command ConnectCommand { get; set; }
+        private Command DisconnectCommand { get; set; }
         public Command DeleteCommand { get; set; }
         
         private async void OnConnect()

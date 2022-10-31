@@ -6,7 +6,7 @@ namespace SmartWeightApp.ViewModels
     [ObservableObject]
     public partial class BaseViewModel
     {
-        private BaseViewModel()
+        protected BaseViewModel()
         {
             RefreshCommand = new(async () =>
             {
@@ -15,8 +15,8 @@ namespace SmartWeightApp.ViewModels
                 IsRefreshing = false;
             });
         }
-        public BaseViewModel(ContentPage page) : this() => Page = page;
-        public BaseViewModel(ContentView view) : this() => View = view;
+        public BaseViewModel(ContentPage? page) : this() => Page = page;
+        public BaseViewModel(ContentView? view) : this() => View = view;
         protected ContentPage? Page { get; }
         protected ContentView? View { get; }
 

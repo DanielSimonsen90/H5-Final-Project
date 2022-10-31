@@ -40,7 +40,7 @@ namespace SmartWeightLib.Models.Api
         public async Task<SimpleResponse> Delete(Endpoints endpoint, string url = "") => await Request<object>(HttpMethod.Delete, endpoint, url);
 
         private async Task<SimpleResponse> Request<Content>(HttpMethod method, Endpoints endpoint, string url = "", Content? content = default) =>
-            new SimpleResponse(
+            new SimpleResponse($"{ApiUrl}/{_endpoints[endpoint]}/{url}",
                 await _client.SendAsync(
                     new HttpRequestMessage(method, $"{ApiUrl}/{_endpoints[endpoint]}/{url}")
                     {

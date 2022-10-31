@@ -67,12 +67,12 @@ namespace SmartWeightAPI.Controllers.Measurements
             List<Measurement> measurements = resolvedAll.Value as List<Measurement> ?? new List<Measurement>();
             string? filterName = Enum.GetName(typeof(MeasurementFilter), filter) ?? "unknown filter";
 
-            if (!measurements.Any()) return NotFound($"No {nameof(PartialMeasurement)}s to delete using filter {filterName}.");
+            if (!measurements.Any()) return NotFound($"No {nameof(Measurement)}s to delete using filter {filterName}.");
 
             _context.Measurements.RemoveRange(measurements);
             _context.SaveChanges();
 
-            return Ok($"Deleted all {filterName} {nameof(PartialMeasurement)}s.");
+            return Ok($"Deleted all {filterName} {nameof(Measurement)}s.");
         }
     }
 }

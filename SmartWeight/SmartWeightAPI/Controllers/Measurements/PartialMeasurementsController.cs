@@ -61,7 +61,7 @@ namespace SmartWeightAPI.Controllers.Measurements
         private void OnIdleTick(object? state, ElapsedEventArgs args)
         {
             // No partial measurements
-            if (GetEntities().Count == 0) return;
+            if (!GetEntities().Any()) return;
 
             // Select partial entries that are 10+ minutes old
             List<Measurement> partials = _context.Measurements

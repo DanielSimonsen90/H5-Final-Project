@@ -37,7 +37,7 @@ namespace SmartWeightAPI.Controllers.Base
                 null;
             if (conn is null) return result;
 
-            var measurements = _context.Measurements.ToList();
+            List<Measurement> measurements = _context.Measurements.ToList();
             // Get partial measurements, if any
             List<PartialMeasurement> partialMeasurements = measurements
                 .Where(m => m.UserId == null 
@@ -53,43 +53,15 @@ namespace SmartWeightAPI.Controllers.Base
                 StatusCodes.Status500InternalServerError, 
                 "User not found - connection is corrupted.");
 
-            SimpleResponse? posted = null;
-            if (partialMeasurements.Count == 1)
+            foreach (Measurement measurement in partialMeasurements.Cast<Measurement>())
             {
-                PartialMeasurement partialMeasurement = partialMeasurements.First();
-
-                // Save measurement
-                posted = await PostAsync(Endpoints.MEASUREMENTS, string.Empty, new Measurement(
-                    conn.UserId,
-                    partialMeasurement.WeightId,
-                    partialMeasurement.Value,
-                    partialMeasurement.Date));
-
-                // Delete partial measurement
-                await DeleteAsync(Endpoints.MEASUREMENTS_PARTIALS, $"{partialMeasurement.Id}");
-            }
-            else
-            {
-                // Save measurements
-                posted = await PostAsync(Endpoints.MEASUREMENTS, "collection", partialMeasurements.Select(m => new Measurement(
-                    conn.UserId,
-                    m.WeightId,
-                    m.Value,
-                    m.Date)).ToList());
-
-                // From all partialMeasurements, select each Id and convert them into 1 string, where each id is seperated by "-": 1-2-3-
-                string partialMeasurementIdStrings = partialMeasurements
-                    .Select(m => m.Id)
-                    .Aggregate(new StringBuilder(), (acc, id) => acc.Append($"{id}-"))
-                    .ToString();
-                await DeleteAsync(Endpoints.MEASUREMENTS_PARTIALS, $"collection/{partialMeasurementIdStrings}");
+                measurement.UserId = conn.UserId;
+                _context.Entry(_context.Measurements.Find(measurement.Id)).CurrentValues.SetValues(measurement);
             }
 
+            await _context.SaveChangesAsync();
 
-            return posted.StatusCode == HttpStatusCode.Created ?
-                Ok("Measurement saved.") :
-                StatusCode(StatusCodes.Status500InternalServerError, 
-                    $"Failed to save measurement:\n\n{posted.Message}");
+            return Ok("Measurement saved.");
         }
     }
 }
