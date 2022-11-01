@@ -1,8 +1,9 @@
-﻿#nullable enable
+﻿using SmartWeightApp.Pages.Connections;
+#nullable enable
 
 namespace SmartWeightApp.ViewModels
 {
-    public class ConnectionViewModel : BaseViewModel
+    public class ConnectionViewModel : BaseViewModel<ConnectionsIndex>
     {
         public ConnectionViewModel(Connection connection, bool canBeDeleted) : base()
         {

@@ -1,10 +1,11 @@
 ﻿using SmartWeightApp.Services;
+using System.Runtime.CompilerServices;
 #nullable enable
 
 namespace SmartWeightApp.ViewModels
 {
     [ObservableObject]
-    public partial class BaseViewModel
+    public partial class BaseViewModel<TContent> where TContent : TemplatedPage
     {
         protected BaseViewModel()
         {
@@ -15,16 +16,30 @@ namespace SmartWeightApp.ViewModels
                 IsRefreshing = false;
             });
         }
-        public BaseViewModel(ContentPage? page) : this() => Page = page;
-        public BaseViewModel(ContentView? view) : this() => View = view;
-        protected ContentPage? Page { get; }
-        protected ContentView? View { get; }
+        public BaseViewModel(TContent? content) : this() => Content = content;
+        protected TContent? Content { get; }
 
-        private readonly DataStore<User> UserStore = DependencyService.Get<DataStore<User>>();
+        #region Store Providers
+        protected readonly DataStore<User> UserStore = DependencyService.Get<DataStore<User>>();
+        protected readonly DataStore<List<Measurement>> MeasurementsStore = DependencyService.Get<DataStore<List<Measurement>>>();
+        protected readonly DataStore<List<Connection>> ConnectionsStore = DependencyService.Get<DataStore<List<Connection>>>();
         protected User? User
         {
             get => UserStore.Value;
-            set => UserStore.Value = value;
+            set => OnUserChanged(UserStore.Value = value);
+        }
+        #endregion
+
+        private async void OnUserChanged(User? user)
+        {
+            if (user is null) return;
+            string userId = user.Id.ToString();
+
+            SimpleResponse measurementsRes = await Client.Get(Endpoints.MEASUREMENTS_OVERVIEW, userId);
+            SimpleResponse connectionsRes = await Client.Get(Endpoints.CONNECTIONS, userId);
+
+            if (measurementsRes.IsSuccess) MeasurementsStore.Value = measurementsRes.GetContent<List<Measurement>>() ?? new();
+            if (connectionsRes.IsSuccess) ConnectionsStore.Value = connectionsRes.GetContent<List<Connection>>() ?? new();
         }
 
         protected ApiClient Client { get; set; } = new ApiClient();

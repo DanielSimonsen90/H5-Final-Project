@@ -1,12 +1,9 @@
-﻿#nullable enable
-
-using System.Data.Entity.Core.Mapping;
-using System.Runtime.CompilerServices;
-using System.Web;
+﻿using SmartWeightApp.Pages.Connections;
+#nullable enable
 
 namespace SmartWeightApp.ViewModels
 {
-    internal partial class ConnectionsViewModel : BaseViewModel
+    internal partial class ConnectionsViewModel : BaseViewModel<ConnectionsIndex>
     {
         [ObservableProperty]
         private List<ConnectionViewModel> _connections = new();
@@ -15,22 +12,46 @@ namespace SmartWeightApp.ViewModels
 
         public Command NewConnectionCommand { get; }
 
-        public ConnectionsViewModel(ContentPage page) : base(page)
+        public ConnectionsViewModel(ConnectionsIndex content) : base(content)
         {
             
             NewConnectionCommand = new(OnNewConnection);
             GetUserConnections();
+
+            PropertyChanged += OnConnectionsChanged;
+        }
+
+        protected override Task OnRefreshing() => Task.Run(GetUserConnections);
+
+        private void OnConnectionsChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Connections))
+            {
+                ConnectionsStore.Value = Connections.Select(c => c.Connection).ToList();
+            }
         }
 
         private async void GetUserConnections()
         {
             if (User is null) return;
+            bool hasConnectionsStored = ConnectionsStore.Value?.Any() ?? false;
 
-            SimpleResponse res = await Client.Get(Endpoints.CONNECTIONS, $"{User.Id}?fromApp=true");
-            if (!res.IsSuccess) return;
+            //List<Connection> connections = (
+            //    hasConnectionsStored
+            //        ? ConnectionsStore.Value
+            //        : await RequestUserConnections()
+            //    ) ?? new();
+            List<Connection> connections = ConnectionsStore.Value ?? new();
+            if (!hasConnectionsStored) connections = await RequestUserConnections();
 
-            List<Connection> connections = res.GetContent<List<Connection>>() ?? new();
             Connections = connections.Select(conn => new ConnectionViewModel(conn, true)).ToList();
+        }
+        private async Task<List<Connection>> RequestUserConnections()
+        {
+            if (User is null) return new();
+
+            SimpleResponse res = await Client.Get(Endpoints.CONNECTIONS, $"{User.Id}/all");
+            return res.IsSuccess ? res.GetContent<List<Connection>>() ?? new() : new();
         }
 
         private async void OnNewConnection()

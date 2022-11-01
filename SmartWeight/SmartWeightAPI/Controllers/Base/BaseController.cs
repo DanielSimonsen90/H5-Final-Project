@@ -1,12 +1,8 @@
-﻿using Microsoft.AspNetCore.Connections;
-using Microsoft.AspNetCore.Mvc;
-using SmartWeightAPI.Controllers.Measurements;
+﻿using Microsoft.AspNetCore.Mvc;
 using SmartWeightLib.Database;
 using SmartWeightLib.Models;
 using SmartWeightLib.Models.Api;
 using SmartWeightLib.Models.Data;
-using System.Net;
-using System.Text;
 
 namespace SmartWeightAPI.Controllers.Base
 {

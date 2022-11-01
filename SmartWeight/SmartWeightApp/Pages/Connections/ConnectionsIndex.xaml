@@ -7,23 +7,28 @@
              x:DataType="vm:ConnectionsViewModel"
              Title="ConnectionsIndex">
     <VerticalStackLayout>
-        <CollectionView ItemsSource="{Binding Connections}" EmptyView="No connections yet.">
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="vm:ConnectionViewModel">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Label Text="{Binding Name}" Grid.Column="1" TextColor="White" VerticalTextAlignment="Center" />
-                        <Button Text="{Binding State}" Grid.Column="2" IsEnabled="{Binding CanBeDeleted}" Command="{Binding PublicCommand}" />
-                    </Grid>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
         <VerticalStackLayout>
             <Editor Text="{Binding WeightIdInput}" />
-            <Button Text="Add Connection" Command="{Binding NewConnectionCommand}" />
+            <HorizontalStackLayout>
+                <Button Text="Add Connection" Command="{Binding NewConnectionCommand}" />
+                <Button Text="Load Connections" Command="{Binding RefreshCommand}" />
+            </HorizontalStackLayout>
         </VerticalStackLayout>
+        <RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}">
+            <CollectionView ItemsSource="{Binding Connections}" EmptyView="No connections yet.">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:ConnectionViewModel">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Label Text="{Binding Name}" Grid.Column="1" TextColor="White" VerticalTextAlignment="Center" />
+                            <Button Text="{Binding State}" Grid.Column="2" IsEnabled="{Binding CanBeDeleted}" Command="{Binding PublicCommand}" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
     </VerticalStackLayout>
 </ContentPage>

@@ -10,24 +10,6 @@ namespace SmartWeightAPI.Controllers
     public class ConnectionsController : BaseController
     {
         public ConnectionsController(SmartWeightDbContext context) : base(context) {}
-        //~ConnectionsController()
-        //{
-        //    // Disconnect all connections on shutdown
-        //    try
-        //    {
-        //        if (_context.Connections.Any())
-        //        {
-        //            foreach (Connection conn in _context.Connections)
-        //            {
-        //                conn.IsConnected = false;
-        //                Connection old = _context.Connections.Find(conn.Id);
-        //                _context.Entry(old).CurrentValues.SetValues(conn);
-        //            }
-        //            _context.SaveChanges();
-        //        }
-        //    }
-        //    catch { }
-        //}
 
         [HttpPost("{weightId}")]
         public async Task<IActionResult> Connect(int weightId, int userId)
@@ -42,7 +24,7 @@ namespace SmartWeightAPI.Controllers
             Connection? conn = connections.Find(c => c.UserId == userId && c.WeightId == weightId);
 
             // Connections exist between entities
-            if (conn is not null && conn.IsConnected) return Ok("Connection was already established.");
+            if (conn is not null && conn.IsConnected) return Ok(conn);
 
             // Remove any previous connections, if any
             Connection? userConnection = connections
@@ -70,7 +52,12 @@ namespace SmartWeightAPI.Controllers
         }
 
         [HttpGet("all")]
-        public IActionResult GetAllConnections(int userId = -1) => Ok(_context.Connections.ToList());
+        public IActionResult GetAllConnections(int userId = -1) => Ok(
+            _context.Connections
+            .Include("Weight")
+            .Include("User")
+            .Where(conn => conn.UserId == userId || userId == -1)
+            .ToList());
 
         [HttpGet]
         public IActionResult GetConnection(int userId, bool fromApp)

@@ -7,22 +7,28 @@
              x:DataType="vm:OverviewViewModel"
              Title="OverviewIndex">
     <RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}">
-        <CollectionView ItemsSource="{Binding Measurements}" EmptyView="{Binding NoMeasurements}">
+        <CollectionView ItemsSource="{Binding Measurements}">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="lib:Measurement">
-                    <ViewCell>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
 
-                            <Label Text="{Binding Date, StringFormat='Date: {0:dd/MM/yyyy, HH:mm}'}" />
-                            <Label Grid.Column="1" Text="{Binding Value, StringFormat='Weight: {0}'}" />
-                        </Grid>
-                    </ViewCell>
+                        <Label Text="{Binding Date, StringFormat='Date: {0:dd/MM/yyyy, HH:mm}'}" Margin="20,0,0,0" />
+                        <Label Grid.Column="1" Text="{Binding Value, StringFormat='Weight: {0}'}" />
+                    </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
+            <CollectionView.EmptyView>
+                <ContentView>
+                    <VerticalStackLayout>
+                        <Label Text="No measurements found." />
+                        <Button Text="Load measurements" Command="{Binding LoadMeasurementsCommand}" />
+                    </VerticalStackLayout>
+                </ContentView>
+            </CollectionView.EmptyView>
         </CollectionView>
     </RefreshView>
 </ContentPage>

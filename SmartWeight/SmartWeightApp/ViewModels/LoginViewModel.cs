@@ -1,7 +1,8 @@
-﻿
+﻿using SmartWeightApp.Pages.Login;
+
 namespace SmartWeightApp.ViewModels
 {
-    public partial class LoginViewModel : BaseViewModel
+    public partial class LoginViewModel : BaseViewModel<LoginIndex>
     {
         [ObservableProperty]
         private string _username = "";
@@ -13,7 +14,7 @@ namespace SmartWeightApp.ViewModels
         public Command LoginCommand { get; set; }
         public Command SignUpCommand { get; set; }
 
-        public LoginViewModel(ContentPage page) : base(page)
+        public LoginViewModel(LoginIndex content) : base(content)
         {
             _loginState = User is not null 
                 ? $"Logged in as {User.Username}" 
