@@ -36,11 +36,6 @@ namespace SmartWeightApp.ViewModels
             if (User is null) return;
             bool hasConnectionsStored = ConnectionsStore.Value?.Any() ?? false;
 
-            //List<Connection> connections = (
-            //    hasConnectionsStored
-            //        ? ConnectionsStore.Value
-            //        : await RequestUserConnections()
-            //    ) ?? new();
             List<Connection> connections = ConnectionsStore.Value ?? new();
             if (!hasConnectionsStored) connections = await RequestUserConnections();
 
@@ -51,7 +46,7 @@ namespace SmartWeightApp.ViewModels
             if (User is null) return new();
 
             SimpleResponse res = await Client.Get(Endpoints.CONNECTIONS, $"{User.Id}/all");
-            return res.IsSuccess ? res.GetContent<List<Connection>>() ?? new() : new();
+            return res.GetContent<List<Connection>>() ?? new();
         }
 
         private async void OnNewConnection()

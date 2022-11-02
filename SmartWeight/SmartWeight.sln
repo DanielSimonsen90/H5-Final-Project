@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartWeightLib", "SmartWeig
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartWeightAPI", "SmartWeightAPI\SmartWeightAPI.csproj", "{49A16C27-E8E3-4979-8E68-6AAA4D719202}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MauiDeleteMe", "MauiDeleteMe\MauiDeleteMe.csproj", "{393075C5-C3F0-4EF4-800C-CD83CE1E207B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,12 @@ Global
 		{49A16C27-E8E3-4979-8E68-6AAA4D719202}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{49A16C27-E8E3-4979-8E68-6AAA4D719202}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{49A16C27-E8E3-4979-8E68-6AAA4D719202}.Release|Any CPU.Build.0 = Release|Any CPU
+		{393075C5-C3F0-4EF4-800C-CD83CE1E207B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{393075C5-C3F0-4EF4-800C-CD83CE1E207B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{393075C5-C3F0-4EF4-800C-CD83CE1E207B}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{393075C5-C3F0-4EF4-800C-CD83CE1E207B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{393075C5-C3F0-4EF4-800C-CD83CE1E207B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{393075C5-C3F0-4EF4-800C-CD83CE1E207B}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,12 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <ActiveDebugFramework>net6.0-windows10.0.19041.0</ActiveDebugFramework>
+    <ActiveDebugFramework>net6.0-android</ActiveDebugFramework>
+    <ActiveDebugProfile>Pixel 5 - API 31 (Android 12.0 - API 31)</ActiveDebugProfile>
     <IsFirstTimeProjectOpen>False</IsFirstTimeProjectOpen>
-    <ActiveDebugProfile>Windows Machine</ActiveDebugProfile>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0-android|AnyCPU'">
-    <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
+    <SelectedPlatformGroup>Emulator</SelectedPlatformGroup>
+    <DefaultDevice>pixel_5_-_api_31</DefaultDevice>
   </PropertyGroup>
   <ItemGroup>
     <MauiXaml Update="App.xaml">
@@ -25,9 +24,6 @@
       <SubType>Designer</SubType>
     </MauiXaml>
     <MauiXaml Update="Resources\Styles\Styles.xaml">
-      <SubType>Designer</SubType>
-    </MauiXaml>
-    <MauiXaml Update="Resources\Settings\Text.xaml">
       <SubType>Designer</SubType>
     </MauiXaml>
   </ItemGroup>

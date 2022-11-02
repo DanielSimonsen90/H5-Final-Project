@@ -43,7 +43,7 @@ namespace SmartWeightAPI.Controllers
                 conn = new Connection(user, weight, true);
                 _context.Connections.Add(conn);
             }
-            else conn.IsConnected = true;
+            else UpdateConnected(conn, true);
             
             await _context.SaveChangesAsync();
 
@@ -54,8 +54,8 @@ namespace SmartWeightAPI.Controllers
         [HttpGet("all")]
         public IActionResult GetAllConnections(int userId = -1) => Ok(
             _context.Connections
-            .Include("Weight")
-            .Include("User")
+            .Include("Weight") // Also send weight data
+            .Include("User") // Also send user data
             .Where(conn => conn.UserId == userId || userId == -1)
             .ToList());
 
@@ -74,23 +74,30 @@ namespace SmartWeightAPI.Controllers
         public IActionResult Disconnect(int userId, bool fromApp, bool delete)
         {
             if (!fromApp) return Forbid("You are not allowed to delete this connection.");
-            string response = "Connection already deleted";
-
+            
+            string response = "Connection already deleted.";
             Connection? conn = _context.Connections.ToList().Find(c => c.UserId == userId);
-            if (conn is null) return Ok("Connection already deleted.");
-            else if (delete)
+            
+            if (conn is null || !conn.IsConnected) return Ok("Connection already deleted."); // Connection doesn't exist
+            else if (delete) // Disconnect request queries deletion and not disconnection
             {
                 _context.Connections.Remove(conn);
                 response = "Connection deleted.";
             }
-            else
+            else // Disconnect connection
             {
-                conn.IsConnected = false;
+                UpdateConnected(conn, false);
                 response = $"Disconnected user {userId} from weight {conn.WeightId}.";
             }
             
             _context.SaveChangesAsync();
             return Ok(response);
+        }
+
+        private void UpdateConnected(Connection conn, bool isConnected)
+        {
+            conn.IsConnected = isConnected;
+            _context.Entry(_context.Connections.FirstOrDefault(c => c.Id == conn.Id)).CurrentValues.SetValues(conn);
         }
     }
 }

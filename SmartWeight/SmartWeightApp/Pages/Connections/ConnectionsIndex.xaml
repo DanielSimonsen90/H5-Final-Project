@@ -21,9 +21,7 @@
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Label Text="{Binding Name}" Grid.Column="1" TextColor="White" VerticalTextAlignment="Center" />
                             <Button Text="{Binding State}" Grid.Column="2" IsEnabled="{Binding CanBeDeleted}" Command="{Binding PublicCommand}" />
                         </Grid>
                     </DataTemplate>

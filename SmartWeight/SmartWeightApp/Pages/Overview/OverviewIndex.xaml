@@ -16,7 +16,7 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <Label Text="{Binding Date, StringFormat='Date: {0:dd/MM/yyyy, HH:mm}'}" Margin="20,0,0,0" />
+                        <Label Text="{Binding Date, StringFormat='Date: {0:dd/MM/yyyy, HH:mm}'}" Margin="20,0,20,0" />
                         <Label Grid.Column="1" Text="{Binding Value, StringFormat='Weight: {0}'}" />
                     </Grid>
                 </DataTemplate>
