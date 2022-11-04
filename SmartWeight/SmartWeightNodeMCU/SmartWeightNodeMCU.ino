@@ -25,10 +25,10 @@ const int LOADCELL_DOUT_PIN = D4;
 const int LOADCELL_SCK_PIN = D5;
 
 const int SCALE_INTERVAL = 5000;
-const int CHECK_READY_AFTER_MS = 1000 * 10;
+const int CHECK_READY_AFTER_MS = 10000;
 const int IN_USE_THRESHOLD = 200;
-long readings[];
-int index = 0;
+//long readings[];
+//int index = 0;
 
 HX711 scale;
 bool initialized = false;
@@ -58,19 +58,16 @@ void original_loop() {
     delay(1000);
 }
 void loop() {
-    if (!scale.is_ready()) {
-		Serial.println("HX711 not found.");
-		delay(CHECK_READY_AFTER_MS);
-		return;
-    }
+    if (!scale.is_ready()) return;
+    else if (!initialized) initialize();
 	
-    if (!initialized) initialize();
-	
-	long reading = scale.get_units(10);
-	in_use = reading > IN_USE_THRESHOLD || reading < -IN_USE_THRESHOLD;
-	
-    in_use ? onInUse(reading) : onIdle(reading);
-	
+	float units = scale.get_units(10);
+    double value = scale.get_value(10);
+    long read = scale.read();
+    long read_average = scale.read_average(10);
+    //Serial.println("Weight: " + String(reading) + "\nResetting...");
+	Serial.println("Units: " + String(units) + "\nValue: " + String(value) + "\nRead: " + String(read) + "\nAverage: " + String(read_average));
+    initialized = false;
 }
 
 void initialize() {
@@ -80,10 +77,11 @@ void initialize() {
     scale.tare();
     Serial.println("Initializing complete. Weight is now ready for use.");
     initialized = true;
+    delay(SCALE_INTERVAL);
 }
 void onInUse(long reading) {
-    readings[index] = reading;
-    index++;
+    //readings[index] = reading;
+    //index = index + 1;
 }
 void onIdle(long reading) {
 	
