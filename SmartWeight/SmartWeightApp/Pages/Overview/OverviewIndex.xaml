@@ -6,29 +6,32 @@
              x:Class="SmartWeightApp.Pages.Overview.OverviewIndex"
              x:DataType="vm:OverviewViewModel"
              Title="OverviewIndex">
-    <RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}">
-        <CollectionView ItemsSource="{Binding Measurements}">
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="lib:Measurement">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
+    <VerticalStackLayout>
+        <RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}">
+            <CollectionView ItemsSource="{Binding Measurements}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="lib:Measurement">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
 
-                        <Label Text="{Binding Date, StringFormat='Date: {0:dd/MM/yyyy, HH:mm}'}" Margin="20,0,20,0" />
-                        <Label Grid.Column="1" Text="{Binding Value, StringFormat='Weight: {0}'}" />
-                    </Grid>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-            <CollectionView.EmptyView>
-                <ContentView>
-                    <VerticalStackLayout>
-                        <Label Text="No measurements found." />
-                        <Button Text="Load measurements" Command="{Binding LoadMeasurementsCommand}" />
-                    </VerticalStackLayout>
-                </ContentView>
-            </CollectionView.EmptyView>
-        </CollectionView>
-    </RefreshView>
+                            <Label Text="{Binding Date, StringFormat='Date: {0:dd/MM/yyyy, HH:mm}'}" Margin="20,0,20,0" />
+                            <Label Grid.Column="1" Text="{Binding Value, StringFormat='Weight: {0}'}" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.EmptyView>
+                    <ContentView>
+                        <VerticalStackLayout>
+                            <Label Text="No measurements found." />
+                            <Button Text="Load measurements" Command="{Binding LoadMeasurementsCommand}" />
+                        </VerticalStackLayout>
+                    </ContentView>
+                </CollectionView.EmptyView>
+            </CollectionView>
+        </RefreshView>
+        <Button Text="Refresh" Command="{Binding LoadMeasurementsCommand}" />
+    </VerticalStackLayout>
 </ContentPage>
