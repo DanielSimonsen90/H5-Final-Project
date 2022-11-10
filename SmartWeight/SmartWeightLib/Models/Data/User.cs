@@ -7,15 +7,13 @@ namespace SmartWeightLib.Models.Data
     /// <summary>
     /// Represents end user, that uses the product
     /// </summary>
-    public class User : IDbItem
+    public class User : Login, IDbItem
     {
         public int Id { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
         public ICollection<Measurement> Measurements { get; set; } = new List<Measurement>();
 
-        public User() { }
-        public User(string username, string password, params Measurement[] measurements)
+        public User() : base(string.Empty, string.Empty) { }
+        public User(string username, string password, params Measurement[] measurements) : base(username, password)
         {
             Username = username;
             Password = password;

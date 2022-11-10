@@ -16,7 +16,7 @@
 
     <TabBar>
         <ShellContent Route="LoginIndex" ContentTemplate="{DataTemplate pages_login:LoginIndex}" Title="Login" />
-        <ShellContent Route="MainPage" ContentTemplate="{DataTemplate local:MainPage}" Title="SmartWeight" />
+        <!--<ShellContent Route="MainPage" ContentTemplate="{DataTemplate local:MainPage}" Title="SmartWeight" />-->
         <ShellContent Route="OverviewIndex" ContentTemplate="{DataTemplate pages_overview:OverviewIndex}" Title="Overview" />
         <ShellContent Route="ConnectionsIndex" ContentTemplate="{DataTemplate pages_conn:ConnectionsIndex}" Title="Connections" />
     </TabBar>
