@@ -96,7 +96,7 @@ void ConnectToWifi() {
         Serial.print(".");
     }
     //Serial.println("\nConnected to the WiFi network");
-    printToDisplay("\nConnected to the WiFi network");
+	printToDisplay("\nConnected to " + WiFi.SSID());
 }
 
 void setup() {
@@ -107,7 +107,7 @@ void setup() {
 
 	pinMode(RED_LED, OUTPUT);
 	pinMode(GREEN_LED, OUTPUT);
-    digitalWrite(RED_LED, HIGH);
+    reset();
 
     Serial.begin(115200);
     scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
@@ -120,10 +120,12 @@ void setup() {
 
 void loop() {
 	
-    if (!scale.is_ready() // Waiting for scale to be ready
-        || !shouldInitialize) return; // Waiting for User to initialize weight
-	
-	else if (!initialized && shouldInitialize) { // Initialize weight and return out of loop
+    // Waiting for scale to be ready and for User to initiate default weight
+    if (!scale.is_ready() || !shouldInitialize) return; 
+    
+    Serial.println(initialized);
+    // Initialize weight and return out of loop
+	if (!initialized && shouldInitialize) { 
         initialize();
         return;
     }
@@ -158,7 +160,6 @@ void initialize() {
     scale.set_scale();
 	Serial.println("Initializing scale...");
     scale.tare();
-    Serial.println("Initializing complete. Weight is now ready for use.");
 	
     initialized = true;
 	
@@ -209,7 +210,7 @@ void PostWeight(int value) {
     http.end(); // Close connection
 	
 	Serial.println("[" + String(httpCode) + "] " + payload);
-    displayResetTimer.once(1, HandleDisplayResetTimer);
+    //displayResetTimer.once(1, HandleDisplayResetTimer);
 }
 
 void printToDisplay(const String value) {
