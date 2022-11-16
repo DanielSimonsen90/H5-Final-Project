@@ -1,4 +1,5 @@
 ﻿using SmartWeightApp.Pages.Login;
+using SmartWeightApp.Pages.Connections;
 
 namespace SmartWeightApp.ViewModels
 {
@@ -33,7 +34,7 @@ namespace SmartWeightApp.ViewModels
             {
                 User = response.GetContent<User>();
                 ResetStates();
-                await GoToAsync($"//{nameof(MainPage)}");
+                await GoToAsync(nameof(ConnectionsIndex));
             }
             catch (Exception ex)
             {

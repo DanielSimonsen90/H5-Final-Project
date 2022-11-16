@@ -42,22 +42,22 @@ namespace SmartWeightApp.ViewModels
         private Command DisconnectCommand { get; set; }
         public Command DeleteCommand { get; set; }
 
-        //private async void OnConnect()
-        //{
-        //    if (Connection is null 
-        //        || User is null
-        //        || IsConnected) return;
-
-        //    SimpleResponse res = await Client.Post(Endpoints.CONNECTIONS, $"{User.Id}/{Connection.WeightId}", new {});
-        //    if (!res.IsSuccess)
-        //    {
-        //        await Alert($"Unable to connect to {_name}.", res.Message);
-        //        return;
-        //    }
-
-        //    Connection = res.GetContent<Connection>() ?? Connection;
-        //}
         private async void OnConnect()
+        {
+            if (Connection is null
+                || User is null
+                || IsConnected) return;
+
+            SimpleResponse res = await Client.Post(Endpoints.CONNECTIONS, $"{User.Id}/{Connection.WeightId}", new { });
+            if (!res.IsSuccess)
+            {
+                await Alert($"Unable to connect to {_name}.", res.Message);
+                return;
+            }
+
+            Connection = res.GetContent<Connection>() ?? Connection;
+        }
+        private async void _OnConnect()
         {
             if (User is null || IsConnected) return;
             else if (!MediaPicker.Default.IsCaptureSupported)

@@ -11,7 +11,10 @@ namespace SmartWeightApp.ViewModels
         public OverviewViewModel(OverviewIndex content) : base(content) 
         {
             IsRefreshing = true; // Load measurements on page load
-            LoadMeasurementsCommand = new(() => { IsRefreshing = true; });
+            LoadMeasurementsCommand = new(() => 
+            { 
+                IsRefreshing = true; 
+            });
 
             PropertyChanged += OnMeasurementsChanged;
         }
@@ -31,6 +34,7 @@ namespace SmartWeightApp.ViewModels
             if (User is null)
             {
                 await Alert("Invalid login state", "You must login before using the Overview page.");
+                IsRefreshing = false;
                 return;
             }
             
