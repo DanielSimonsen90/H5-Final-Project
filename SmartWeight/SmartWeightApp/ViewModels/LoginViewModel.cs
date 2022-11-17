@@ -60,15 +60,17 @@ namespace SmartWeightApp.ViewModels
             var user = new User(Username, Password);
             SimpleResponse userRes = await Client.Post(Endpoints.USERS, user);
 
-            if (!userRes.IsSuccess) await Alert("Fejl", userRes.Message);
-            else OnLogin();
+            if (userRes.IsSuccess) OnLogin();
+            else await Alert("Fejl", userRes.Message);
         }
 
         private void ResetStates()
         {
-            _username = string.Empty;
-            _password = string.Empty;
-            _loginState = User is not null ? $"Logged in as {User.Username}" : "Please login to your accout.";
+            Username = string.Empty;
+            Password = string.Empty;
+            LoginState = User is not null
+                ? $"Logged in as {User.Username}"
+                : "Please login to your accout.";
         }
     }
 }

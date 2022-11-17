@@ -67,9 +67,13 @@ const uint8_t WeightId = 1;
 // TODO: Save all weights in String[] to then later post as collcetion
 
 void HandleExternalInterrupt() {
-    Serial.println("Pressed");
+    Serial.println("States:\n\t" + 
+        String("shouldInitialize: ") + String(shouldInitialize) + 
+        "\n\tinitialized: " + String(initialized) + 
+        "\n\tinUse: " + String(inUse)
+    );
     
-    if (!initialized && !shouldInitialize) {
+    if (!initialized) {
         Serial.println("shouldInitialize: true");
         shouldInitialize = true;
         return;
@@ -100,30 +104,28 @@ void ConnectToWifi() {
 }
 
 void setup() {
+    Serial.begin(115200);
+
     scale.set_scale(CALIBRATION_FACTOR);
-	
-    pinMode(BUTTON, INPUT);
-    attachInterrupt(digitalPinToInterrupt(BUTTON), HandleExternalInterrupt, RISING);
+    scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
 
 	pinMode(RED_LED, OUTPUT);
 	pinMode(GREEN_LED, OUTPUT);
-    reset();
-
-    Serial.begin(115200);
-    scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
+	
+    pinMode(BUTTON, INPUT);
+    attachInterrupt(digitalPinToInterrupt(BUTTON), HandleExternalInterrupt, RISING);
     
-    delay(200);
     printToDisplay("Booting...");
+    delay(200);
 
     ConnectToWifi();
+    reset();
 }
 
 void loop() {
-	
     // Waiting for scale to be ready and for User to initiate default weight
-    if (!scale.is_ready() || !shouldInitialize) return; 
+    if (!shouldInitialize) return;
     
-    Serial.println(initialized);
     // Initialize weight and return out of loop
 	if (!initialized && shouldInitialize) { 
         initialize();
@@ -156,10 +158,22 @@ void loop() {
 }
 
 void initialize() {
-    printToDisplay("Initing..");
-    scale.set_scale();
-	Serial.println("Initializing scale...");
+    scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
+
+    if (!scale.is_ready()) {
+        printToDisplay("Scale is not ready yet.");
+        shouldInitialize = false;
+        return;
+    }
+
+    printToDisplay("Initializing scale...");
+    scale.set_scale(CALIBRATION_FACTOR);
+	
+    printToDisplay("Waiting to tare...");
+    delay(5000);
+	printToDisplay("Taring scale...");
     scale.tare();
+    printToDisplay("Scale tared, continuing...");
 	
     initialized = true;
 	
@@ -177,6 +191,7 @@ void reset() {
 	
     digitalWrite(RED_LED, HIGH);
     digitalWrite(GREEN_LED, LOW);
+    printToDisplay("SmartWeight");
 }
 
 String GetDate() {
@@ -217,9 +232,11 @@ void printToDisplay(const String value) {
     Serial.println("Display: " + value);
     display.begin(SSD1306_SWITCHCAPVCC, DISPLAY_I2CBUS_ADDRESS);
     display.clearDisplay();
-    //display.setTextSize(4);
+    display.setCursor(8, 8);
+    display.setTextSize(2);
     display.setTextColor(WHITE);
-    display.setCursor(30, 16);
+	
+	//display.setCursor(SCREEN_WIDTH / 2 - value.length() * 2.5, SCREEN_HEIGHT / 4);
     display.println(value);
     display.display();
 }
