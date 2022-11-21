@@ -7,6 +7,8 @@ namespace SmartWeightApp
         public static MauiApp CreateMauiApp()
         {
             LocalStorage.Remove(StorageKeys.CONNECTION);
+            //LocalStorage.Remove(StorageKeys.USER);
+            //LocalStorage.Remove(StorageKeys.MEASUREMENTS);
 
             // Cache crucial models
             DependencyService.RegisterSingleton(new DataStore<User>(null, StorageKeys.USER, value => 

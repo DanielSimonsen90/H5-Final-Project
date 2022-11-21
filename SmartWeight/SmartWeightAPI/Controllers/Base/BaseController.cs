@@ -29,7 +29,7 @@ namespace SmartWeightAPI.Controllers.Base
             // Is weight connected to a user, if not, then maybe user connects after weight was used
             Connection? conn =
                 type == MeasurementPartialTypes.USER ? _context.Connections.FirstOrDefault(c => c.UserId == id) :
-                type == MeasurementPartialTypes.PARTIAL_MEASUREMENT ? _context.Connections.FirstOrDefault(c => c.WeightId == id) :
+                type == MeasurementPartialTypes.PARTIAL_MEASUREMENT ? _context.Connections.FirstOrDefault(c => c.WeightId == id && c.IsConnected) :
                 null;
             if (conn is null) return result;
 

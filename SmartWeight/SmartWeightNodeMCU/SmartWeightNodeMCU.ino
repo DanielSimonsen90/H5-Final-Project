@@ -19,6 +19,7 @@
 // Weight module
 #include "HX711.h"
 
+//const double CALIBRATION_FACTOR = 2230;
 const double CALIBRATION_FACTOR = -459.542;
 
 HX711 scale;
@@ -63,13 +64,18 @@ const uint8_t RED_LED = D7;
 const uint8_t GREEN_LED = D8;
 
 const uint8_t WeightId = 1;
+const int WaitTimeMS = 2000;
 
 // TODO: Save all weights in String[] to then later post as collcetion
 
 void HandleExternalInterrupt() {
-    Serial.println("Pressed");
+    Serial.println("States:\n\t" + 
+        String("shouldInitialize: ") + String(shouldInitialize) + 
+        "\n\tinitialized: " + String(initialized) + 
+        "\n\tinUse: " + String(inUse)
+    );
     
-    if (!initialized && !shouldInitialize) {
+    if (!initialized) {
         Serial.println("shouldInitialize: true");
         shouldInitialize = true;
         return;
@@ -100,52 +106,81 @@ void ConnectToWifi() {
 }
 
 void setup() {
-    scale.set_scale(CALIBRATION_FACTOR);
+    Serial.begin(115200);
+
+    scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
+    delay(1000);
+}
+void loop() {
+    if (scale.is_ready()) {
+        scale.set_scale();
+        printToDisplay("Remove weight");
+        delay(5000);
+        scale.tare();
+        printToDisplay("Tare done...");
+        printToDisplay("Place weight");
+        delay(5000);
+        long reading = scale.get_units(10);
+        printToDisplay("Result: " + String(reading));
+    }
+    else {
+        printToDisplay("HX711 not found.");
+    }
+}
+
+void my_setup() {
+    Serial.begin(115200);
+    printToDisplay("Booting...");
 	
-    pinMode(BUTTON, INPUT);
-    attachInterrupt(digitalPinToInterrupt(BUTTON), HandleExternalInterrupt, RISING);
+    //scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
+    //scale.set_scale(CALIBRATION_FACTOR);
+    //scale.tare();
 
 	pinMode(RED_LED, OUTPUT);
 	pinMode(GREEN_LED, OUTPUT);
-    reset();
-
-    Serial.begin(115200);
-    scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
+	
+    pinMode(BUTTON, INPUT);
+    attachInterrupt(digitalPinToInterrupt(BUTTON), HandleExternalInterrupt, RISING);
     
     delay(200);
-    printToDisplay("Booting...");
 
     ConnectToWifi();
+    reset();
 }
 
-void loop() {
-	
+void my_loop() {
     // Waiting for scale to be ready and for User to initiate default weight
-    if (!scale.is_ready() || !shouldInitialize) return; 
+    if (!shouldInitialize) return;
     
-    Serial.println(initialized);
-    // Initialize weight and return out of loop
-	if (!initialized && shouldInitialize) { 
-        initialize();
-        return;
-    }
-	
-    // Waiting for user to use weight and press button
-    if (!inUse) return;
+ //   // Initialize weight and return out of loop
+	//if (!initialized && shouldInitialize) { 
+ //       initialize();
+ //       return;
+ //   }
+	//
+ //   // Waiting for user to use weight and press button
+ //   if (!inUse) return;
 
-    Serial.println("Now in use");
+    scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
+    //scale.set_scale(CALIBRATION_FACTOR);
+    scale.set_scale();
+    scale.tare();
+
+    printToDisplay("Place weight");
+    delay(WaitTimeMS);
+    printToDisplay("Measuring");
 
 	// User is using weight
 	float units = scale.get_units(10);
-    double value = scale.get_value(10);
-    long read = scale.read();
-    long read_average = scale.read_average(10);
+    //double value = scale.get_value(10);
+    //long read = scale.read();
+    //long read_average = scale.read_average(10);
     
 	Serial.println(
-        "Units: " + String(units) + 
-        "\nValue: " + String(value) + 
-        "\nRead: " + String(read) + 
-        "\nAverage: " + String(read_average)
+        "Units: " + String(units)
+        //+ "\nValue: " + String(value)
+        //+ "\nRead: " + String(read)
+        //+ "\nAverage: " + String(read_average)
     );
     printToDisplay(String(units));
 
@@ -156,10 +191,24 @@ void loop() {
 }
 
 void initialize() {
-    printToDisplay("Initing..");
-    scale.set_scale();
-	Serial.println("Initializing scale...");
-    scale.tare();
+    printToDisplay("Initializing scale...");
+	
+ //   scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
+ //   delay(1000);
+	//
+ //   if (!scale.is_ready()) {
+ //       printToDisplay("Scale is not ready yet.");
+ //       shouldInitialize = false;
+ //       return;
+ //   }
+
+ //   scale.set_scale(CALIBRATION_FACTOR);
+	//
+ //   //printToDisplay("Waiting to tare...");
+ //   //delay(5000);
+	//printToDisplay("Taring scale...");
+ //   scale.tare();
+ //   printToDisplay("Scale tared, continuing...");
 	
     initialized = true;
 	
@@ -177,6 +226,7 @@ void reset() {
 	
     digitalWrite(RED_LED, HIGH);
     digitalWrite(GREEN_LED, LOW);
+    printToDisplay("SmartWeight");
 }
 
 String GetDate() {
@@ -217,9 +267,11 @@ void printToDisplay(const String value) {
     Serial.println("Display: " + value);
     display.begin(SSD1306_SWITCHCAPVCC, DISPLAY_I2CBUS_ADDRESS);
     display.clearDisplay();
-    //display.setTextSize(4);
+    display.setCursor(8, 16);
+    display.setTextSize(2);
     display.setTextColor(WHITE);
-    display.setCursor(30, 16);
+	
+	//display.setCursor(SCREEN_WIDTH / 2 - value.length() * 2.5, SCREEN_HEIGHT / 4);
     display.println(value);
     display.display();
 }
