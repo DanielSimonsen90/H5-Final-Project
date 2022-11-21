@@ -151,19 +151,9 @@ void my_setup() {
 void my_loop() {
     // Waiting for scale to be ready and for User to initiate default weight
     if (!shouldInitialize) return;
-    
- //   // Initialize weight and return out of loop
-	//if (!initialized && shouldInitialize) { 
- //       initialize();
- //       return;
- //   }
-	//
- //   // Waiting for user to use weight and press button
- //   if (!inUse) return;
 
     scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
-    //scale.set_scale(CALIBRATION_FACTOR);
-    scale.set_scale();
+    scale.set_scale(CALIBRATION_FACTOR);
     scale.tare();
 
     printToDisplay("Place weight");
@@ -172,15 +162,15 @@ void my_loop() {
 
 	// User is using weight
 	float units = scale.get_units(10);
-    //double value = scale.get_value(10);
-    //long read = scale.read();
-    //long read_average = scale.read_average(10);
+    double value = scale.get_value(10);
+    long read = scale.read();
+    long read_average = scale.read_average(10);
     
 	Serial.println(
         "Units: " + String(units)
-        //+ "\nValue: " + String(value)
-        //+ "\nRead: " + String(read)
-        //+ "\nAverage: " + String(read_average)
+        + "\nValue: " + String(value)
+        + "\nRead: " + String(read)
+        + "\nAverage: " + String(read_average)
     );
     printToDisplay(String(units));
 
