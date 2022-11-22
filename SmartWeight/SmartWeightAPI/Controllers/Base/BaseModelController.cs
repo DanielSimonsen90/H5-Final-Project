@@ -31,16 +31,16 @@ namespace SmartWeightAPI.Controllers.Base
         }
 
         [HttpGet]
-        public virtual ActionResult<List<Entity>> GetAll() => Ok(GetEntities());
+        public virtual Task<ActionResult<List<Entity>>> GetAll() => Task.FromResult<ActionResult<List<Entity>>>(Ok(GetEntities()));
 
         [HttpGet("{id}")]
-        public virtual IActionResult GetOne(int id)
+        public virtual Task<IActionResult> GetOne(int id)
         {
             Entity? entity = GetEntity(id);
 
-            return entity is null ?
+            return await Task.FromResult<IActionResult>(entity is null ?
                 NotFound($"No {entityName} found with id {id}") :
-                Ok(entity);
+                Ok(entity));
         }
 
 

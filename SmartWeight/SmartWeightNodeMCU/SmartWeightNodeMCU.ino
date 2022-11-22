@@ -34,11 +34,12 @@ bool inUse = false;
 
 WiFiClient client;
 HTTPClient http;
-const String API_URL = "https://192.168.1.104:45455/api/measurements/partials";
+const String API_URL = "http://192.168.1.101:45455/api/measurements/partials";
 
 // Date & time modules
 #include <chrono>
 #include <Ticker.h>
+#include <ctime>
 
 Ticker displayResetTimer;
 
@@ -66,52 +67,53 @@ const uint8_t GREEN_LED = D8;
 const uint8_t WeightId = 1;
 const int WaitTimeMS = 2000;
 
+const String Wifi_SSID = "h5pd091122";
+const String Wifi_Password = "h5pd091122_styrer";
+//const String Wifi_SSID = "Zyxel-6571";
+//const String Wifi_Password = "Y3NQRP3M4M";
+
 // TODO: Save all weights in String[] to then later post as collcetion
 
 void HandleExternalInterrupt() {
-    Serial.println("States:\n\t" + 
-        String("shouldInitialize: ") + String(shouldInitialize) + 
-        "\n\tinitialized: " + String(initialized) + 
-        "\n\tinUse: " + String(inUse)
-    );
+    //Serial.println("States:\n\t" + 
+    //    String("shouldInitialize: ") + String(shouldInitialize) + 
+    //    "\n\tinitialized: " + String(initialized) + 
+    //    "\n\tinUse: " + String(inUse)
+    //);
     
     if (!initialized) {
-        Serial.println("shouldInitialize: true");
+        //Serial.println("shouldInitialize: true");
         shouldInitialize = true;
         return;
     }
 
-    Serial.println("inUse: true");
-    inUse = true;
-}
-void HandleDisplayResetTimer() {
-    display.begin(SSD1306_SWITCHCAPVCC, DISPLAY_I2CBUS_ADDRESS);
-	display.clearDisplay();
-    display.setCursor(30, 16);
-    display.println("SmartWeight");
-	display.display();
+    //Serial.println("inUse: true");
+    //inUse = true;
 }
 
 void ConnectToWifi() {
-    WiFi.begin("h5pd091122", "h5pd091122_styrer");
+    WiFi.begin(Wifi_SSID, Wifi_Password);
 
     printToDisplay("Connecting to WiFi");
     while (WiFi.status() != WL_CONNECTED) // Wait for WiFI connection
     {
         delay(500);
-        Serial.print(".");
+        //Serial.print(".");
+        Serial.println(WiFi.status());
     }
-    //Serial.println("\nConnected to the WiFi network");
-	printToDisplay("\nConnected to " + WiFi.SSID());
+	printToDisplay("Connected to " + WiFi.SSID());
+}
+float GetRandomWeight() {
+	return random(50, 90);
 }
 
-void setup() {
+void original_setup() {
     Serial.begin(115200);
 
     scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
     delay(1000);
 }
-void loop() {
+void original_loop() {
     if (scale.is_ready()) {
         scale.set_scale();
         printToDisplay("Remove weight");
@@ -127,7 +129,6 @@ void loop() {
         printToDisplay("HX711 not found.");
     }
 }
-
 void my_setup() {
     Serial.begin(115200);
     printToDisplay("Booting...");
@@ -147,7 +148,6 @@ void my_setup() {
     ConnectToWifi();
     reset();
 }
-
 void my_loop() {
     // Waiting for scale to be ready and for User to initiate default weight
     if (!shouldInitialize) return;
@@ -176,6 +176,32 @@ void my_loop() {
 
     if (WiFi.status() == WL_CONNECTED) PostWeight(units);
     else Serial.println("Error in WiFi connection. Status is " + String(WiFi.status()));
+
+    reset();
+}
+
+void setup() {
+    Serial.begin(115200);
+
+    pinMode(BUTTON, INPUT);
+    attachInterrupt(digitalPinToInterrupt(BUTTON), HandleExternalInterrupt, RISING);
+
+    delay(200);
+
+    ConnectToWifi();
+    reset();
+}
+void loop() {
+	// Waiting for scale to be ready and for User to initiate default weight
+	if (!shouldInitialize) return;
+
+	// User is using weight
+    double value = GetRandomWeight();
+
+	printToDisplay(String(value));
+
+	if (WiFi.status() == WL_CONNECTED) PostWeight(value);
+	else Serial.println("Error in WiFi connection. Status is " + String(WiFi.status()));
 
     reset();
 }
@@ -210,54 +236,61 @@ void initialize() {
 }
 void reset() {
     Serial.println("Resetting");
-    initialized = false;
     shouldInitialize = false;
-    inUse = false;
 	
-    digitalWrite(RED_LED, HIGH);
-    digitalWrite(GREEN_LED, LOW);
+    delay(1000);
     printToDisplay("SmartWeight");
+    //displayResetTimer.once(1, []() { printToDisplay("SmartWeight"); });
 }
 
 String GetDate() {
-    time_t timestamp = time(0) * 1000;
+    auto now = std::chrono::system_clock::now();
+    time_t timestamp = std::chrono::system_clock::to_time_t(now);
     tm* ltm = localtime(&timestamp);
+
     String date = (
-        String(ltm->tm_year) + "-" +
-        String(ltm->tm_mon) + "-" +
-        String(ltm->tm_mday) + "T" +
-        String(ltm->tm_hour) + ":" +
-        String(ltm->tm_min) + ":" +
-        String(ltm->tm_sec) + "." +
-        String(millis()) + "Z"
+        //String(ltm->tm_year) + "-" +
+        //String(ltm->tm_mon) + "-" +
+        //String(ltm->tm_mday) + "T" +
+        //String(ltm->tm_hour) + ":" +
+        //String(ltm->tm_min) + ":" +
+        //String(ltm->tm_sec) + "." +
+        //String(millis()) + "Z"
+        String("2022-11-22T11:11:11.000Z")
     );
 	return date;
 }
-void PostWeight(int value) {
+void PostWeight(double value) {
+    Serial.println("Posting value: " + String(value));
+
     http.begin(client, API_URL); // Request destination
     http.addHeader("Content-Type", "application/json"); // Request content-type header
     String content = (
-    "{" +
-        String("\"WeightId\": ") + String(WeightId) + ", " +
-		//String("\"UserId\": ") + String("null") + ", " +
-		String("\"Value\": \"") + String(value) + "\", " +
-        String("\"Date\": ") + GetDate() +
+    "{\n" +
+        String("   \"WeightId\": ") + String(WeightId) + ",\n" +
+		String("   \"Value\": ") + String(value) + ",\n" +
+        String("   \"Date\": \"") + GetDate() + "\"\n" +
     "}");
     Serial.println(content);
+    delay(200);
 
+    printToDisplay("Posting");
     int httpCode = http.POST(content); // Send the request
+    printToDisplay("Parsing response");
     String payload = http.getString(); // Get response
-    http.end(); // Close connection
-	
+    
+    printToDisplay(String(httpCode));
 	Serial.println("[" + String(httpCode) + "] " + payload);
-    //displayResetTimer.once(1, HandleDisplayResetTimer);
+	
+    printToDisplay("Ending connection");
+    http.end(); // Close connection
 }
 
 void printToDisplay(const String value) {
     Serial.println("Display: " + value);
     display.begin(SSD1306_SWITCHCAPVCC, DISPLAY_I2CBUS_ADDRESS);
     display.clearDisplay();
-    display.setCursor(8, 16);
+    display.setCursor(4, 16);
     display.setTextSize(2);
     display.setTextColor(WHITE);
 	

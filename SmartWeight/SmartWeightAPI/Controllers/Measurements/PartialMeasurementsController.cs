@@ -11,15 +11,15 @@ namespace SmartWeightAPI.Controllers.Measurements
     [Route("api/measurements/partials")]
     public class PartialMeasurementsController : BaseModelController<PartialMeasurement>
     {
-        private static readonly int MEASUREMENTS_TIME_MS = 1000 * 60 * 10; // Every 10 minutes
+        private static readonly int MEASUREMENTS_TIME_MINS = 10; // Every 10 minutes
         public PartialMeasurementsController(SmartWeightDbContext context) : base(context)
         {
-            var timer = new System.Timers.Timer(MEASUREMENTS_TIME_MS);
+            var timer = new System.Timers.Timer(MEASUREMENTS_TIME_MINS);
             timer.Elapsed += OnIdleTick;
             timer.Start();
         }
 
-        [HttpDelete("{aggregated}")]
+        [HttpDelete("collection/{aggregated}")]
         public IActionResult DeleteMany(string aggregated)
         {
             IEnumerable<int> ids = aggregated.Split('-').Select(id => int.Parse(id));
@@ -65,7 +65,7 @@ namespace SmartWeightAPI.Controllers.Measurements
 
             // Select partial entries that are 10+ minutes old
             List<Measurement> partials = _context.Measurements
-                .Where(m => m.Date < DateTime.Now.AddMilliseconds(MEASUREMENTS_TIME_MS))
+                .Where(m => m.Date < DateTime.Now.AddMinutes(MEASUREMENTS_TIME_MINS))
                 .ToList();
 
             // Partials saved are less than 10 minutes old, and therefore don't need to be removed just yet
