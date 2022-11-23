@@ -41,6 +41,7 @@ namespace SmartWeightAPI.Controllers.Measurements
                 .Where(m => m.UserId == userId)
                 .OrderBy(m => m.Date)
                 .ToList();
+            measurements.Reverse();
 
             return measurements is null || measurements.Count == 0 ?
                 NotFound($"No measurements found for user {userId}") :

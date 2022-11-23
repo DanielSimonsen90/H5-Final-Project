@@ -6,7 +6,7 @@ namespace SmartWeightApp
     {
         public static MauiApp CreateMauiApp()
         {
-            LocalStorage.Remove(StorageKeys.CONNECTION);
+            //LocalStorage.Remove(StorageKeys.CONNECTION);
             //LocalStorage.Remove(StorageKeys.USER);
             //LocalStorage.Remove(StorageKeys.MEASUREMENTS);
 
@@ -17,7 +17,6 @@ namespace SmartWeightApp
                 && !string.IsNullOrEmpty(value.Username)) // value has a Username
              );
             DependencyService.RegisterSingleton(new DataStore<List<Measurement>>(new List<Measurement>(), StorageKeys.MEASUREMENTS));
-            DependencyService.RegisterSingleton(new DataStore<List<Connection>>(new List<Connection>(), StorageKeys.CONNECTION));
 
             return MauiApp.CreateBuilder()
                 .UseMauiApp<App>()

@@ -7,7 +7,7 @@
              x:DataType="vm:OverviewViewModel"
              Title="OverviewIndex">
     <VerticalStackLayout>
-        <Button Text="Refresh" Command="{Binding LoadMeasurementsCommand}" />
+        <Button Text="Refresh" IsEnabled="{Binding IsNotRefreshing}" Command="{Binding LoadMeasurementsCommand}" />
         <RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}">
             <CollectionView ItemsSource="{Binding Measurements}">
                 <CollectionView.ItemTemplate>

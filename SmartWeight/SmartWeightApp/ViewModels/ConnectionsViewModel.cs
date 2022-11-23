@@ -17,19 +17,9 @@ namespace SmartWeightApp.ViewModels
             
             NewConnectionCommand = new(OnNewConnection);
             GetUserConnections();
-
-            PropertyChanged += OnConnectionsChanged;
         }
 
         protected override Task OnRefreshing() => Task.Run(GetUserConnections);
-
-        private void OnConnectionsChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(Connections))
-            {
-                ConnectionsStore.Value = Connections.Select(c => c.Connection).ToList();
-            }
-        }
 
         private async void GetUserConnections()
         {

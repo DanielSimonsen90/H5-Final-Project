@@ -22,7 +22,6 @@ namespace SmartWeightApp.ViewModels
         #region Store Providers
         protected readonly DataStore<User> UserStore = DependencyService.Get<DataStore<User>>();
         protected readonly DataStore<List<Measurement>> MeasurementsStore = DependencyService.Get<DataStore<List<Measurement>>>();
-        protected readonly DataStore<List<Connection>> ConnectionsStore = DependencyService.Get<DataStore<List<Connection>>>();
         protected User? User
         {
             get => UserStore.Value;
@@ -36,10 +35,8 @@ namespace SmartWeightApp.ViewModels
             string userId = user.Id.ToString();
 
             SimpleResponse measurementsRes = await Client.Get(Endpoints.MEASUREMENTS_OVERVIEW, userId);
-            SimpleResponse connectionsRes = await Client.Get(Endpoints.CONNECTIONS, userId);
 
             if (measurementsRes.IsSuccess) MeasurementsStore.Value = measurementsRes.GetContent<List<Measurement>>() ?? new();
-            if (connectionsRes.IsSuccess) ConnectionsStore.Value = connectionsRes.GetContent<List<Connection>>() ?? new();
         }
 
         protected ApiClient Client { get; set; } = new ApiClient();
@@ -49,6 +46,7 @@ namespace SmartWeightApp.ViewModels
 
         [ObservableProperty]
         private bool isRefreshing = false;
+        public bool IsNotRefreshing => !IsRefreshing;
         /// <summary>
         /// Override whenever you want to do something when the refresh command is called
         /// </summary>

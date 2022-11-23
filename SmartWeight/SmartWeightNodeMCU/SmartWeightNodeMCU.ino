@@ -274,15 +274,13 @@ void PostWeight(double value) {
     Serial.println(content);
     delay(200);
 
-    printToDisplay("Posting");
+    printToDisplay("Posting..");
     int httpCode = http.POST(content); // Send the request
-    printToDisplay("Parsing response");
     String payload = http.getString(); // Get response
     
     printToDisplay(String(httpCode));
 	Serial.println("[" + String(httpCode) + "] " + payload);
 	
-    printToDisplay("Ending connection");
     http.end(); // Close connection
 }
 

@@ -14,18 +14,6 @@ namespace SmartWeightApp.ViewModels
             ConnectCommand = new Command(OnConnect);
             DisconnectCommand = new Command(OnDisconnect);
             DeleteCommand = new Command(OnDelete);
-
-            PropertyChanged += OnConnectionChanged;
-        }
-
-        private void OnConnectionChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(Connection) && ConnectionsStore.Value is not null)
-            {
-                ConnectionsStore.Value = ConnectionsStore.Value
-                    .Select(conn => conn.Id != Connection.Id ? conn : Connection)
-                    .ToList();
-            }
         }
 
         private bool IsConnected => Connection.IsConnected;
@@ -87,7 +75,6 @@ namespace SmartWeightApp.ViewModels
             } while (request && permission != PermissionStatus.Granted);
 
             FileResult? result = await MediaPicker.Default.CapturePhotoAsync()
-                // TODO: Remove temporary QR code to weights/1
                 ?? new FileResult("https://media.discordapp.net/attachments/777577204775125102/1034446105649365052/unknown.png");
             if (result is null)
             {

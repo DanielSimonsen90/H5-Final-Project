@@ -10,7 +10,7 @@
             <Editor Text="{Binding WeightIdInput}" />
             <HorizontalStackLayout>
                 <Button Text="Add Connection" Command="{Binding NewConnectionCommand}" />
-                <Button Text="Load Connections" Command="{Binding RefreshCommand}" />
+                <Button Text="Load Connections" IsEnabled="{Binding IsNotRefreshing}" Command="{Binding RefreshCommand}" />
             </HorizontalStackLayout>
         </VerticalStackLayout>
         <RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}">
