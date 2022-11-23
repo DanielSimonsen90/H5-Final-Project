@@ -31,10 +31,10 @@ namespace SmartWeightAPI.Controllers.Base
         }
 
         [HttpGet]
-        public virtual Task<ActionResult<List<Entity>>> GetAll() => Task.FromResult<ActionResult<List<Entity>>>(Ok(GetEntities()));
+        public async virtual Task<ActionResult<List<Entity>>> GetAll() => await Task.FromResult<ActionResult<List<Entity>>>(Ok(GetEntities()));
 
         [HttpGet("{id}")]
-        public virtual Task<IActionResult> GetOne(int id)
+        public async virtual Task<IActionResult> GetOne(int id)
         {
             Entity? entity = GetEntity(id);
 
@@ -45,7 +45,7 @@ namespace SmartWeightAPI.Controllers.Base
 
 
         [HttpPut("{id}")]
-        public virtual IActionResult Update(int id, [FromBody] Entity entity)
+        public async virtual Task<IActionResult> Update(int id, [FromBody] Entity entity)
         {
             if (!ModelState.IsValid) return BadRequest($"Provided {entityName} {nameof(entity)} is invalid.");
             else if (entity.Id != id) return BadRequest($"Id mismatch between {entityName} {entity.Id} and parameter {id}.");
@@ -57,11 +57,11 @@ namespace SmartWeightAPI.Controllers.Base
             _context.Entry(oldEntity).CurrentValues.SetValues(entity);
             _context.SaveChanges();
 
-            return Ok($"{entityName} updated.");
+            return await Task.FromResult<IActionResult>(Ok($"{entityName} updated."));
         }
 
         [HttpDelete("{id}")]
-        public virtual IActionResult Delete(int id)
+        public async virtual Task<IActionResult> Delete(int id)
         {
             Entity? entity = GetEntity(id);
 
@@ -70,7 +70,7 @@ namespace SmartWeightAPI.Controllers.Base
             DeleteEntity(entity);
             _context.SaveChanges();
 
-            return Ok($"{entityName} deleted.");
+            return await Task.FromResult<IActionResult>(Ok($"{entityName} deleted."));
         }
     }
 }

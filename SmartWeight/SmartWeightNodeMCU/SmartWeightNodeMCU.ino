@@ -34,7 +34,7 @@ bool inUse = false;
 
 WiFiClient client;
 HTTPClient http;
-const String API_URL = "http://192.168.1.101:45455/api/measurements/partials";
+const String API_URL = "http://192.168.1.24:45455/api/measurements/partials";
 
 // Date & time modules
 #include <chrono>
@@ -67,10 +67,10 @@ const uint8_t GREEN_LED = D8;
 const uint8_t WeightId = 1;
 const int WaitTimeMS = 2000;
 
-const String Wifi_SSID = "h5pd091122";
-const String Wifi_Password = "h5pd091122_styrer";
-//const String Wifi_SSID = "Zyxel-6571";
-//const String Wifi_Password = "Y3NQRP3M4M";
+//const String Wifi_SSID = "h5pd091122";
+//const String Wifi_Password = "h5pd091122_styrer";
+const String Wifi_SSID = "Zyxel_6551";
+const String Wifi_Password = "FUXXUAKMCG";
 
 // TODO: Save all weights in String[] to then later post as collcetion
 
@@ -268,8 +268,8 @@ void PostWeight(double value) {
     String content = (
     "{\n" +
         String("   \"WeightId\": ") + String(WeightId) + ",\n" +
-		String("   \"Value\": ") + String(value) + ",\n" +
-        String("   \"Date\": \"") + GetDate() + "\"\n" +
+		String("   \"Value\": ") + String(value) + "\n"
+        //String("   \"Date\": \"") + GetDate() + "\"\n" +
     "}");
     Serial.println(content);
     delay(200);

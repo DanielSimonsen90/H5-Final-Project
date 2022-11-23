@@ -11,10 +11,10 @@ namespace SmartWeightAPI.Controllers.Measurements
     [Route("api/measurements/partials")]
     public class PartialMeasurementsController : BaseModelController<PartialMeasurement>
     {
-        private static readonly int MEASUREMENTS_TIME_MINS = 10; // Every 10 minutes
+        private static readonly int MEASUREMENTS_TIME_MS = 1000 * 60 * 1; // Every 10 minutes
         public PartialMeasurementsController(SmartWeightDbContext context) : base(context)
         {
-            var timer = new System.Timers.Timer(MEASUREMENTS_TIME_MINS);
+            var timer = new System.Timers.Timer(MEASUREMENTS_TIME_MS);
             timer.Elapsed += OnIdleTick;
             timer.Start();
         }
@@ -49,6 +49,7 @@ namespace SmartWeightAPI.Controllers.Measurements
         {
             if (entity is null) return BadRequest($"{nameof(PartialMeasurement)} has invalid values.");
             else if (_context.Weights.Find(entity.WeightId) is null) return NotFound($"Weight {entity.WeightId} does not exist.");
+            entity.Date = DateTime.Now; // Would love for this to be in the embedded weight, but it doesn't know the current time.
 
             // Use base create method. If it fails, return error
             IActionResult result = await base.Create(entity);
@@ -57,15 +58,15 @@ namespace SmartWeightAPI.Controllers.Measurements
                 await HandleMeasurement(entity.WeightId, MeasurementPartialTypes.PARTIAL_MEASUREMENT, result) :
                 result;
         }
-
-        private void OnIdleTick(object? state, ElapsedEventArgs args)
+        
+        private async void OnIdleTick(object? state, ElapsedEventArgs args)
         {
             // No partial measurements
             if (!GetEntities().Any()) return;
 
             // Select partial entries that are 10+ minutes old
             List<Measurement> partials = _context.Measurements
-                .Where(m => m.Date < DateTime.Now.AddMinutes(MEASUREMENTS_TIME_MINS))
+                .Where(m => m.Date.AddMilliseconds(MEASUREMENTS_TIME_MS) < DateTime.Now)
                 .ToList();
 
             // Partials saved are less than 10 minutes old, and therefore don't need to be removed just yet
@@ -73,7 +74,7 @@ namespace SmartWeightAPI.Controllers.Measurements
 
             // Remove all partials, that exceed limit
             _context.Measurements.RemoveRange(partials);
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
     }
 }
