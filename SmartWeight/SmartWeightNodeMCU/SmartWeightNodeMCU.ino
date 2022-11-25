@@ -26,7 +26,7 @@ bool ready = false;
 
 WiFiClient client;
 HTTPClient http;
-const String API_URL = "http://192.168.1.96:45455/api/measurements/partials";
+const String API_URL = "http://192.168.1.24:45455/api/measurements/partials";
 
 // Date & time modules
 #include <chrono>
@@ -49,7 +49,6 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 // Hardware setup
 void IRAM_ATTR HandleExternalInterrupt();
-
 const uint8_t BUTTON = D6;
 
 const uint8_t WeightId = 1;
@@ -112,34 +111,6 @@ void loop() {
     reset();
 }
 
-void initialize() {
-    printToDisplay("Initializing scale...");
-	
- //   scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
- //   delay(1000);
-	//
- //   if (!scale.is_ready()) {
- //       printToDisplay("Scale is not ready yet.");
- //       shouldInitialize = false;
- //       return;
- //   }
-
- //   scale.set_scale(CALIBRATION_FACTOR);
-	//
- //   //printToDisplay("Waiting to tare...");
- //   //delay(5000);
-	//printToDisplay("Taring scale...");
- //   scale.tare();
- //   printToDisplay("Scale tared, continuing...");
-	
-    initialized = true;
-	
-    digitalWrite(RED_LED, LOW);
-    digitalWrite(GREEN_LED, HIGH);
-    printToDisplay("Ready");
-	
-    //delay(SCALE_INTERVAL);
-}
 void reset() {
     Serial.println("Resetting");
     ready = false;
